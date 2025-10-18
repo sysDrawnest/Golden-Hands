@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About SysDriving - Our Mission and Team</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        body {
+            background-color: #000000;
+        }
+
+        /* Custom Colors from Main Site */
+        .broto-yellow { color: #FFC107; }
+        .broto-red { background-color: #D92323; }
+
+        /* Hero Image mimicking the reference style */
+        .about-hero-bg {
+            background-image: url(background.jpg);
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-overlay { background-color: rgba(0, 0, 0, 0.6); }
+
+        /* Statistics Section Styling */
+        .stats-bg {
+            /* Using a dark blue/black gradient to replace the reference image's blue bottom section */
+            background: linear-gradient(135deg, #111111 0%, #000000 100%); 
+        }
+        .stat-number {
+            font-size: 3rem; /* Large number size */
+            font-weight: 800;
+        }
+        
+        /* CTA Banner Styling (Reused from index.html) */
+        .book-lesson-banner {
+            background-color: #D92323; 
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 100 100"><defs><pattern id="tire-tread" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="4" height="10" fill="rgba(0,0,0,0.1)" transform="rotate(45)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23tire-tread)"/></svg>');
+            background-size: 500px 500px;
+            overflow: hidden;
+            position: relative;
+        }
+        .tire-mark {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: repeating-linear-gradient(
+                -45deg,
+                #000,
+                #000 10px,
+                rgba(0, 0, 0, 0.6) 10px,
+                rgba(0, 0, 0, 0.6) 20px
+            );
+            transform: skewY(-5deg); 
+            transform-origin: bottom left;
+            z-index: 1;
+        }
+
+        /* Testimonial Card Styling (For quotes section) */
+        .quote-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- Mobile Menu Styles (Side Drawer - Copied and adapted for About page) --- */
+        #mobile-menu-drawer { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        #mobile-menu-drawer.active { transform: translateX(0); }
+        .dropdown-menu { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; }
+        .dropdown-menu.active { max-height: 400px; opacity: 1; pointer-events: auto; }
+
+    </style>
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+        
+        // --- UI State Management for Mobile Menu ---
+        let isMobileMenuOpen = false;
+
+        function toggleMobileMenu(open) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            isMobileMenuOpen = (open !== undefined) ? open : !isMobileMenuOpen;
+            drawer.classList.toggle('active', isMobileMenuOpen);
+            document.body.classList.toggle('overflow-hidden', isMobileMenuOpen);
+        }
+
+        // --- Dynamic Counter Logic ---
+        function animateNumbers() {
+            const stats = [
+                { id: 'stat-1', end: 95, unit: '%' },
+                { id: 'stat-2', end: 4200, unit: '+' },
+                { id: 'stat-3', end: 12, unit: '+' },
+            ];
+
+            const duration = 2000; // 2 seconds
+
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                if (!element) return;
+                
+                const start = 0;
+                const end = stat.end;
+                let startTime = null;
+
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                    const increment = Math.floor((progress / duration) * (end - start));
+                    const current = Math.min(start + increment, end);
+
+                    element.textContent = current + stat.unit;
+
+                    if (progress < duration) {
+                        window.requestAnimationFrame(step);
+                    } else {
+                        element.textContent = end + stat.unit; // Ensure final value is exact
+                    }
+                }
+                window.requestAnimationFrame(step);
+            });
+        }
+
+        // --- Intersection Observer to trigger animation on scroll ---
+        function setupStatsObserver() {
+            const statSection = document.getElementById('statistics-section');
+            if (!statSection) return;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateNumbers();
+                        observer.unobserve(statSection); // Stop observing after animation
+                    }
+                });
+            }, {
+                threshold: 0.5 // Trigger when 50% of the element is visible
+            });
+
+            observer.observe(statSection);
+        }
+
+        // --- General Utility ---
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            const messageElement = document.createElement('div');
+            messageElement.className = `p-3 mb-4 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} shadow-xl`;
+            messageElement.textContent = message;
+            container.appendChild(messageElement);
+
+            setTimeout(() => {
+                messageElement.remove();
+            }, 5000);
+        }
+
+        window.onload = function() {
+            lucide.createIcons();
+            setupStatsObserver();
+            document.getElementById('mobile-menu-toggle').addEventListener('click', () => toggleMobileMenu(true));
+            document.getElementById('mobile-menu-close').addEventListener('click', () => toggleMobileMenu(false));
+        };
+
+    </script>
+</head>
+<body class="text-white font-sans antialiased">
+    <!-- Message Container (for form submissions, replacing alert) -->
+    <div id="message-container" class="fixed top-4 right-4 z-50 w-full max-w-xs"></div>
+
+    <!-- Minimal Header (Reused from main site for navigation) -->
+    <header class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Mobile Menu Button (LEFT) -->
+                <button type="button" id="mobile-menu-toggle" class="inline-flex items-center justify-center p-2 rounded-md text-broto-yellow lg:hidden order-1" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Logo - Centered on mobile, left on desktop -->
+            <a href="index.html" class="text-3xl font-extrabold tracking-widest text-center w-full lg:w-auto lg:text-left">
+                <span class="text-white">GOLDEN</span>
+                <span class="text-broto-yellow">HANDS</span>
+            </a>
+                
+                <!-- Desktop Menu Items and CTA -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium order-3 items-center">
+                    <a href="index.html" class="hover:text-broto-yellow transition duration-300">Home</a>
+                    <a href="#" class="text-broto-yellow font-bold border-b-2 border-broto-yellow">About Us</a>
+                    <a href="index.html#service-section" class="hover:text-broto-yellow transition duration-300">Services</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Contact</a>
+                    <a href="#book-lesson" class="bg-broto-yellow text-broto-black text-xs font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
+                        Book Lesson
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Drawer (Right Side) -->
+    <div id="mobile-menu-drawer" class="fixed top-0 right-0 w-64 h-full bg-broto-dark p-6 z-50 shadow-2xl lg:hidden">
+        <div class="flex justify-end mb-8">
+            <button id="mobile-menu-close" class="text-broto-yellow hover:text-white">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+        </div>
+        <div class="space-y-4 text-lg font-medium">
+            <a href="index.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Home</a>
+            <a href="#" class="block text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">About Us</a>
+            <a href="index.html#service-section" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Services</a>
+            <a href="index.html#contact-section" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Contact</a>
+            <a href="#book-lesson" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Book Lesson</a>
+        </div>
+    </div>
+
+
+    <!-- 1. About Us Hero Banner -->
+    <section class="about-hero-bg py-32 relative">
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative max-w-7xl mx-auto px-4 text-center">
+            <p class="text-white text-md mb-2 uppercase tracking-widest font-light">Home / About Us</p>
+            <h1 class="text-6xl font-black text-white">About Us</h1>
+        </div>
+    </section>
+
+    <!-- 2. Get to Know Us (Main Content) - Following reference style & Image fix -->
+    <section class="py-20 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-12 items-start">
+                
+                <!-- Left Image Block (Large, non-rounded) -->
+                <div class="lg:h-full lg:order-1 order-2">
+                    <img src="https://placehold.co/800x600/222222/ffffff?text=Friendly+Instructors" alt="Friendly Instructors" class="w-full h-full object-cover shadow-2xl lg:shadow-none">
+                </div>
+                
+                <!-- Right Text Block (Content and Alignment Match) -->
+                <div class="text-left py-8 lg:py-0 lg:order-2 order-1">
+                    <p class="text-sm font-semibold text-broto-yellow mb-2 uppercase tracking-widest">About Our Institution</p>
+                    <h2 class="text-4xl font-black text-white mb-6">
+                        More than 10+ Years Trusted Our <span class="broto-yellow">Driving & Training</span> Institution
+                    </h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        SysDriving School was founded on the principle of promoting safe, confident, and responsible driving. For over a decade, we have successfully trained thousands of students, ensuring they not only pass their tests but become capable drivers for life. We use modern, dual-control vehicles and curriculum designed by veteran road safety experts.
+                    </p>
+                    <p class="text-gray-400 text-base leading-relaxed">
+                        Our commitment goes beyond the certificate; it's about instilling the knowledge needed to handle any real-world situation, making road safety the priority for every student that walks through our doors.
+                    </p>
+                    <a href="#mission-section" class="inline-block mt-8 text-broto-yellow border border-broto-yellow px-6 py-3 rounded-lg text-sm font-bold hover:bg-broto-yellow hover:text-broto-black transition duration-300">
+                        LEARN MORE ABOUT US
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Quotes by Trainers (Testimonials Style) -->
+    <section class="py-20 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-black text-center text-white mb-12">
+                Words from Our <span class="broto-yellow">Expert Trainers</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Quote Card 1 (Ravi Sharma) -->
+                <div class="quote-card p-6 border-b-4 border-broto-yellow">
+                    <i data-lucide="quote" class="w-8 h-8 broto-yellow mb-4"></i>
+                    <p class="text-gray-300 text-base italic mb-6">
+                        "Patience is the foundation of good instruction. We focus on building confidence, one careful lesson at a time, ensuring every student masters the road at their own pace."
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop" alt="Ravi Sharma" class="w-10 h-10 rounded-full object-cover border-2 border-broto-yellow">
+                        <div>
+                            <p class="font-bold text-white">Ravi Sharma</p>
+                            <p class="text-sm broto-yellow">Senior Instructor</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quote Card 2 (Anjali Varma) -->
+                <div class="quote-card p-6 border-b-4 border-broto-yellow">
+                    <i data-lucide="quote" class="w-8 h-8 broto-yellow mb-4"></i>
+                    <p class="text-gray-300 text-base italic mb-6">
+                        "Driving is freedom. Our mission is to equip our students not just with a license, but with the comprehensive skill set to stay safe in any traffic condition."
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop" alt="Anjali Varma" class="w-10 h-10 rounded-full object-cover border-2 border-broto-yellow">
+                        <div>
+                            <p class="font-bold text-white">Anjali Varma</p>
+                            <p class="text-sm broto-yellow">Lead Trainer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quote Card 3 (Prakash Singh) -->
+                <div class="quote-card p-6 border-b-4 border-broto-yellow">
+                    <i data-lucide="quote" class="w-8 h-8 broto-yellow mb-4"></i>
+                    <p class="text-gray-300 text-base italic mb-6">
+                        "The RTO process can be daunting. We streamline the entire documentation and preparation, ensuring our students' only focus is on becoming excellent drivers."
+                    </p>
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop" alt="Prakash Singh" class="w-10 h-10 rounded-full object-cover border-2 border-broto-yellow">
+                        <div>
+                            <p class="font-bold text-white">Prakash Singh</p>
+                            <p class="text-sm broto-yellow">RTO Expert</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Our Mission (Techno Style) - Following reference style -->
+    <section id="mission-section" class="py-20 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                 <!-- Left Image Block -->
+                <div>
+                    <img src="https://placehold.co/600x400/222222/ffffff?text=Mission+Image" alt="Our Mission" class="w-full rounded-xl shadow-2xl">
+                </div>
+                
+                <!-- Right Text Block -->
+                <div class="text-left">
+                    <p class="text-sm font-semibold text-broto-yellow mb-2 uppercase tracking-widest">About Our Corporation</p>
+                    <h2 class="text-4xl font-black text-white mb-6">
+                        Quality Makes the Belief for <span class="broto-yellow">Safe Drivers</span>
+                    </h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-8">
+                        Our Mission is to set the gold standard for driving education. We strive to reduce road accidents by producing drivers who are not just competent but truly responsible. From the moment you enroll to the day you receive your license, we guarantee a supportive, high-quality learning environment focused on real-world preparedness.
+                    </p>
+                    <a href="contact.html" class="inline-flex items-center bg-broto-red text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-red-700 transition duration-300">
+                        <i data-lucide="mail" class="w-5 h-5 mr-3"></i> Contact Us Directly
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Techno Statistics Section (Dynamic Counter) - Following reference style -->
+    <section id="statistics-section" class="py-20 stats-bg text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+             <h2 class="text-3xl font-black text-white mb-10 uppercase tracking-wider">
+                <span class="broto-yellow">Technical</span> Statistics
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <!-- Stat 1: Success Rate -->
+                <div class="text-white">
+                    <p id="stat-1" class="stat-number broto-yellow mb-3">0%</p>
+                    <p class="text-sm uppercase tracking-widest font-semibold text-gray-300">Licence Success Rate</p>
+                </div>
+                <!-- Stat 2: Students Registered -->
+                <div class="text-white">
+                    <p id="stat-2" class="stat-number broto-yellow mb-3">0+</p>
+                    <p class="text-sm uppercase tracking-widest font-semibold text-gray-300">Satisfied Students Registered</p>
+                </div>
+                <!-- Stat 3: Awards -->
+                <div class="text-white">
+                    <p id="stat-3" class="stat-number broto-yellow mb-3">0+</p>
+                    <p class="text-sm uppercase tracking-widest font-semibold text-gray-300">Driving Excellence Awards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Book Lesson CTA Banner (Reused from index.html) -->
+    <section id="book-lesson" class="book-lesson-banner h-64 flex items-center justify-center">
+        <div class="tire-mark hidden md:block"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full">
+            
+            <!-- Left Text & Button -->
+            <div class="text-white text-left p-4">
+                <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-4">
+                    Book Your First Driving Lesson Today
+                </h2>
+                <a href="index.html#book-lesson-form-section" class="inline-block bg-broto-black text-white font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-grey transition duration-300 shadow-xl">
+                    Book Now
+                </a>
+            </div>
+
+            <!-- Right Car Image Placeholder -->
+            <div class="relative h-full hidden lg:block" style="width: 500px; height: 100%;">
+                <img src="https://placehold.co/400x200/ffffff/000000?text=Stylized+White+Car+with+Plate" 
+                     alt="Stylized White Car" 
+                     class="absolute bottom-0 right-0 w-full" 
+                     style="height: 160%;"> 
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Placeholder for continuity, copy of main site footer required for full page) -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 SysDriving School. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> s

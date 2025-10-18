@@ -1,0 +1,524 @@
+<!-- dynamic componets loader, reuse the code(testing   -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | GOLDEN HANDS Driving School</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Load Component Loader -->
+    <script src="components/components-loader.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#000000',
+                        'secondary': '#111111',
+                        'accent': '#FFC107',
+                        'cta-red': '#D92323',
+                        'dark-gray': '#1a1a1a',
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gallery-item {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .filter-btn.active {
+            background-color: #FFC107;
+            color: #000000;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu { 
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; 
+            max-height: 0; 
+            overflow: hidden; 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+        .dropdown-menu.active { 
+            max-height: 400px; 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        #mobile-menu-drawer { 
+            transition: transform 0.3s ease-in-out; 
+            transform: translateX(100%); 
+        }
+        #mobile-menu-drawer.active { 
+            transform: translateX(0); 
+        }
+        #mobile-services-dropdown {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobile-services-dropdown.active {
+            max-height: 400px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-primary text-white font-inter">
+
+    <!-- Navigation Container -->
+    <div id="navbar-container"></div>
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
+
+    <!-- Hero Section with Parallax -->
+    <section class="relative py-32 bg-fixed bg-cover bg-center bg-no-repeat overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1502781252888-9143ba7f074e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&fm=jpg&q=60&w=3000');">
+        <!-- Dark gradient overlay for better text readability -->
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50"></div>
+        
+        <!-- Animated elements -->
+        <div class="absolute top-10 left-10 w-20 h-20 border-2 border-accent/30 rounded-full animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-16 h-16 border-2 border-accent/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+        
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white">Our Gallery</h1>
+                <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+                    Step into the world of GOLDEN HANDS Driving School. Explore our modern facilities, 
+                    advanced training vehicles, and witness the journey of our successful students.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#gallery-grid" class="bg-accent text-primary px-8 py-3 rounded-lg font-bold hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105">
+                        View Gallery
+                    </a>
+                    <a href="contact.html" class="border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-primary transition-all duration-300">
+                        Book a Visit
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div class="animate-bounce">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Filter -->
+    <section class="py-10 bg-dark-gray">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button class="filter-btn active bg-secondary text-white px-6 py-2 rounded-md hover:bg-accent hover:text-primary transition-colors" data-filter="all">
+                    All Photos
+                </button>
+                <button class="filter-btn bg-secondary text-white px-6 py-2 rounded-md hover:bg-accent hover:text-primary transition-colors" data-filter="vehicles">
+                    Training Vehicles
+                </button>
+                <button class="filter-btn bg-secondary text-white px-6 py-2 rounded-md hover:bg-accent hover:text-primary transition-colors" data-filter="facilities">
+                    Facilities
+                </button>
+                <button class="filter-btn bg-secondary text-white px-6 py-2 rounded-md hover:bg-accent hover:text-primary transition-colors" data-filter="students">
+                    Students
+                </button>
+                <button class="filter-btn bg-secondary text-white px-6 py-2 rounded-md hover:bg-accent hover:text-primary transition-colors" data-filter="instructors">
+                    Instructors
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section id="gallery-grid" class="py-16 bg-primary">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Gallery Item 1 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="vehicles">
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Modern training vehicle" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Modern Training Vehicles</h3>
+                        <p class="text-gray-300">Our fleet includes the latest models with dual controls for safety.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 2 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="facilities">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Driving simulation room" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Advanced Simulation Room</h3>
+                        <p class="text-gray-300">Practice in realistic scenarios before hitting the road.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 3 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="students">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Student receiving instruction" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Personalized Instruction</h3>
+                        <p class="text-gray-300">Our instructors provide one-on-one guidance for every student.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 4 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="instructors">
+                    <img src="https://images.unsplash.com/photo-1589758438368-0ad531db3366?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1172&q=80" 
+                         alt="Certified instructor" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Certified Instructors</h3>
+                        <p class="text-gray-300">Learn from experienced professionals with years of teaching expertise.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 5 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="facilities">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25856cd63?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Classroom session" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Interactive Classroom</h3>
+                        <p class="text-gray-300">Engaging theory sessions with modern teaching aids.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 6 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="students">
+                    <img src="https://images.unsplash.com/photo-1544627836-5c6cb5779451?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" 
+                         alt="Student passing driving test" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Success Stories</h3>
+                        <p class="text-gray-300">Celebrating our students' achievements and license acquisitions.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 7 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="vehicles">
+                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" 
+                         alt="Vehicle maintenance" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Regular Maintenance</h3>
+                        <p class="text-gray-300">Our vehicles undergo rigorous safety checks and maintenance.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 8 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="instructors">
+                    <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Instructor training" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Continuous Training</h3>
+                        <p class="text-gray-300">Our instructors regularly update their skills and teaching methods.</p>
+                    </div>
+                </div>
+                
+                <!-- Gallery Item 9 -->
+                <div class="gallery-item bg-secondary rounded-lg overflow-hidden relative" data-category="students">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                         alt="Group of students" class="w-full h-64 object-cover">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-bold mb-2">Community of Learners</h3>
+                        <p class="text-gray-300">Join a supportive community of fellow driving students.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center mt-12">
+                <button id="load-more" class="bg-cta-red text-white px-8 py-3 rounded-md font-medium hover:bg-red-700 transition-colors">
+                    Load More Photos
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="py-16 bg-secondary">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">See Us in Action</h2>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Watch our training sessions and student testimonials to get a better feel for our approach.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Video 1 -->
+                <div class="bg-dark-gray rounded-lg overflow-hidden">
+                    <div class="relative pb-[56.25%] h-0 bg-black">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p class="text-white font-medium">Behind the Wheel Training</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Practical Driving Lessons</h3>
+                        <p class="text-gray-300">See how our instructors guide students through real-world driving scenarios.</p>
+                    </div>
+                </div>
+                
+                <!-- Video 2 -->
+                <div class="bg-dark-gray rounded-lg overflow-hidden">
+                    <div class="relative pb-[56.25%] h-0 bg-black">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4 cursor-pointer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p class="text-white font-medium">Student Success Stories</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Graduate Testimonials</h3>
+                        <p class="text-gray-300">Hear from our successful students about their learning journey with GOLDEN HANDS.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-cta-red relative overflow-hidden">
+        <!-- Tire track design element -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+            <div class="absolute top-1/4 left-10 w-24 h-24 rounded-full border-4 border-white"></div>
+            <div class="absolute top-1/4 right-10 w-24 h-24 rounded-full border-4 border-white"></div>
+            <div class="absolute bottom-1/4 left-10 w-24 h-24 rounded-full border-4 border-white"></div>
+            <div class="absolute bottom-1/4 right-10 w-24 h-24 rounded-full border-4 border-white"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Driving Journey?</h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto">
+                Join thousands of successful drivers who started their journey with GOLDEN HANDS Driving School.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="contact.html" class="bg-accent text-primary px-8 py-3 rounded-md font-bold hover:bg-yellow-500 transition-colors">
+                    Book a Lesson
+                </a>
+                <a href="about.html" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-md font-bold hover:bg-white hover:text-primary transition-colors">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+<!-- Debug Information -->
+<div id="debug-info" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; z-index: 10000; font-size: 12px;">
+    Debug: Components loading...
+</div>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        // Gallery-specific functionality
+        function initPageSpecific() {
+            // Gallery filtering
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    galleryItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Load more functionality
+            document.getElementById('load-more')?.addEventListener('click', function() {
+                alert('More photos would be loaded in a real implementation');
+            });
+
+            // Smooth scroll for "View Gallery" button
+            document.querySelector('a[href="#gallery-grid"]')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('gallery-grid').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // Global navigation functions (these will be used by the loaded navbar)
+        function toggleDropdown() {
+            const dropdown = document.getElementById('services-dropdown');
+            dropdown?.classList.toggle('active');
+        }
+
+        function toggleSearch() {
+            const searchPanel = document.getElementById('search-panel');
+            if (searchPanel) {
+                searchPanel.classList.toggle('hidden');
+                if (!searchPanel.classList.contains('hidden')) {
+                    document.getElementById('search-input')?.focus();
+                }
+            }
+        }
+
+        function toggleLoginModal(open) {
+            const modal = document.getElementById('login-modal');
+            if (modal) {
+                const isOpen = (open !== undefined) ? open : !modal.classList.contains('hidden');
+                modal.classList.toggle('hidden', !isOpen);
+                document.body.classList.toggle('overflow-hidden', isOpen);
+            }
+        }
+
+        function toggleMobileMenu(open) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            if (drawer) {
+                const isOpen = (open !== undefined) ? open : !drawer.classList.contains('active');
+                drawer.classList.toggle('active', isOpen);
+                document.body.classList.toggle('overflow-hidden', isOpen);
+            }
+        }
+
+        function toggleMobileServices() {
+            const dropdown = document.getElementById('mobile-services-dropdown');
+            const arrow = document.getElementById('mobile-services-arrow');
+            
+            if (dropdown && arrow) {
+                dropdown.classList.toggle('active');
+                arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        // Make functions globally available
+        window.toggleDropdown = toggleDropdown;
+        window.toggleSearch = toggleSearch;
+        window.toggleLoginModal = toggleLoginModal;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleMobileServices = toggleMobileServices;
+        window.initPageSpecific = initPageSpecific;
+
+        // Debug: Check what components loaded
+        setTimeout(() => {
+            console.log('=== COMPONENT LOADING DEBUG ===');
+            console.log('Navbar container content length:', document.getElementById('navbar-container')?.innerHTML?.length || 'Empty');
+            console.log('Footer container content length:', document.getElementById('footer-container')?.innerHTML?.length || 'Empty');
+            console.log('Modal container content length:', document.getElementById('modal-container')?.innerHTML?.length || 'Empty');
+            
+            // Check if components have actual content (not just empty divs)
+            const navbarContent = document.getElementById('navbar-container')?.innerHTML;
+            const footerContent = document.getElementById('footer-container')?.innerHTML;
+            const modalContent = document.getElementById('modal-container')?.innerHTML;
+            
+            const hasNavbar = navbarContent && navbarContent.length > 50; // More than just empty tags
+            const hasFooter = footerContent && footerContent.length > 50;
+            const hasModal = modalContent && modalContent.length > 50;
+            
+            console.log('Navbar has content:', hasNavbar);
+            console.log('Footer has content:', hasFooter);
+            console.log('Modal has content:', hasModal);
+            
+            // Update debug info
+            const debugInfo = document.getElementById('debug-info');
+            if (debugInfo) {
+                debugInfo.innerHTML = `
+                    Components Status:<br>
+                    Navbar: ${hasNavbar ? '✓ Loaded' : '✗ Empty/Missing'}<br>
+                    Footer: ${hasFooter ? '✓ Loaded' : '✗ Empty/Missing'}<br>
+                    Modal: ${hasModal ? '✓ Loaded' : '✗ Empty/Missing'}<br>
+                    <small>Check browser console (F12) for details</small>
+                `;
+                
+                // Color code the status
+                if (hasNavbar && hasFooter && hasModal) {
+                    debugInfo.style.background = 'rgba(0,255,0,0.8)';
+                } else if (!hasNavbar && !hasFooter && !hasModal) {
+                    debugInfo.style.background = 'rgba(255,0,0,0.8)';
+                } else {
+                    debugInfo.style.background = 'rgba(255,165,0,0.8)';
+                }
+            }
+            
+            // If components are missing, show more detailed error
+            if (!hasNavbar || !hasFooter || !hasModal) {
+                console.error('Some components failed to load:');
+                if (!hasNavbar) console.error('- Navbar is empty or missing');
+                if (!hasFooter) console.error('- Footer is empty or missing');
+                if (!hasModal) console.error('- Modal is empty or missing');
+                console.error('Check:');
+                console.error('1. File paths in components-loader.js');
+                console.error('2. Component files exist in components/ folder');
+                console.error('3. Component files have actual HTML content');
+                console.error('4. No JavaScript errors in console');
+            }
+        }, 1500);
+    </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reactive Particle Logo (Image)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+        }
+        
+        #logo-canvas {
+            display: block;
+            background-color: #000;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10;
+        }
+        
+        .control-btn {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            color: #ffc107;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+            border-color: rgba(255, 193, 7, 0.8);
+        }
+        
+        .size-info {
+            color: #ffc107;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="logo-canvas"></canvas>
+        <div class="size-info" id="size-info">Logo Scale: 30%</div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="changeLogoSize(0.2)">Small (20%)</button>
+            <button class="control-btn" onclick="changeLogoSize(0.3)">Medium (30%)</button>
+            <button class="control-btn" onclick="changeLogoSize(0.4)">Large (40%)</button>
+            <button class="control-btn" onclick="changeLogoSize(0.5)">X-Large (50%)</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        // 🔴 IMAGE FILENAME - MUST BE IN THE SAME FOLDER AS THIS HTML FILE
+        const IMAGE_FILE = 'golden hands.png'; 
+
+        // Dynamic settings that adjust based on logo size
+        let PARTICLE_SIZE = 1.5; 
+        let DENSITY = 1.5; // Lower number = more particles / higher resolution
+        const REPEL_RADIUS = 500; 
+        const REPEL_STRENGTH = 1.8;
+        const RETURN_STRENGTH = 0.05;
+        const IDLE_SPEED = 0.05;
+        const IDLE_SCALE = 0.05;
+        let LOGO_SCALE_FACTOR = 0.3; // Starting at 30%
+
+        // --- Global Variables ---
+        let canvas, ctx;
+        let particles = [];
+        let mouse = { x: null, y: null, radius: REPEL_RADIUS };
+        let time = 0;
+        let logoImage = null;
+        let animationId = null;
+
+        // --- Utility Functions ---
+        // Converts RGB pixel data to a hex color string
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, '0');
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Adjust particle settings based on logo size
+        function adjustParticleSettings(scaleFactor) {
+            // For smaller logos, use smaller particles and higher density
+            if (scaleFactor <= 0.25) {
+                PARTICLE_SIZE = 1.2;
+                DENSITY = 1.2;
+            } else if (scaleFactor <= 0.35) {
+                PARTICLE_SIZE = 1.5;
+                DENSITY = 1.5;
+            } else {
+                PARTICLE_SIZE = 2;
+                DENSITY = 2;
+            }
+        }
+
+        // --- Particle Class (Now stores and uses individual color) ---
+        class Particle {
+            constructor(x, y, color) { // Color passed from image sampling
+                this.x = x;
+                this.y = y;
+                this.originalX = x;
+                this.originalY = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.mass = 1;
+                this.waveOffset = Math.random() * Math.PI * 2;
+                this.color = color; // Store particle's individual color
+            }
+
+            draw() {
+                ctx.fillStyle = this.color; // Use particle's individual color
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, PARTICLE_SIZE, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            update() {
+                // IDLE MOVEMENT
+                const idleVx = Math.sin(time + this.waveOffset) * IDLE_SCALE;
+                const idleVy = Math.cos(time + this.waveOffset * 0.5) * IDLE_SCALE;
+                this.vx += idleVx;
+                this.vy += idleVy;
+
+                // MOUSE REPULSION
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < mouse.radius) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    const force = (mouse.radius - distance) / mouse.radius * REPEL_STRENGTH;
+                    this.vx -= forceDirectionX * force;
+                    this.vy -= forceDirectionY * force;
+                }
+
+                // RETURN TO ORIGINAL POSITION
+                const returnDx = this.originalX - this.x;
+                const returnDy = this.originalY - this.y;
+                this.vx += returnDx * RETURN_STRENGTH;
+                this.vy += returnDy * RETURN_STRENGTH;
+
+                // DAMPING/FRICTION
+                this.vx *= 0.9;
+                this.vy *= 0.9;
+
+                // UPDATE POSITION
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+        }
+        
+        // --- Image Sampling Logic ---
+        function sampleParticles(tempCtx, drawWidth, drawHeight) {
+            const data = tempCtx.getImageData(0, 0, drawWidth, drawHeight).data;
+            const canvasWidth = canvas.width;
+            const canvasHeight = canvas.height;
+            
+            // Calculate offset to center the logo on the main canvas
+            const offsetX = (canvasWidth - drawWidth) / 2;
+            const offsetY = (canvasHeight - drawHeight) / 2;
+
+            particles = []; // Clear existing particles
+            
+            for (let y = 0; y < drawHeight; y += DENSITY) {
+                for (let x = 0; x < drawWidth; x += DENSITY) {
+                    const index = (Math.floor(y) * drawWidth + Math.floor(x)) * 4;
+                    const alpha = data[index + 3];
+
+                    // Only create a particle if the pixel is visible (not fully transparent)
+                    if (alpha > 0) {
+                        const r = data[index];
+                        const g = data[index + 1];
+                        const b = data[index + 2];
+                        const color = rgbToHex(r, g, b); // Get the particle's color from the image
+
+                        // Particles are placed on the main canvas (x/y + offset)
+                        particles.push(new Particle(x + offsetX, y + offsetY, color));
+                    }
+                }
+            }
+            
+            console.log(`Created ${particles.length} particles for logo`);
+        }
+
+
+        // --- Initialization ---
+        function init() {
+            canvas = document.getElementById('logo-canvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            
+            // Adjust particle settings based on current scale
+            adjustParticleSettings(LOGO_SCALE_FACTOR);
+            
+            // 1. Load the Image if not already loaded
+            if (!logoImage) {
+                logoImage = new Image();
+                logoImage.src = IMAGE_FILE; 
+
+                // 2. Wait for the Image to Load
+                logoImage.onload = () => {
+                    createParticlesFromImage();
+                    
+                    // Start animation loop
+                    if (particles.length > 0) {
+                        if (animationId) {
+                            cancelAnimationFrame(animationId);
+                        }
+                        animate();
+                    } else {
+                        console.error("No particles sampled. Check if the image loaded or if DENSITY is too high.");
+                    }
+                };
+
+                logoImage.onerror = () => {
+                    console.error(`Failed to load logo image from path: ${IMAGE_FILE}. Please check the file name and location.`);
+                };
+            } else {
+                // Image already loaded, just recreate particles
+                createParticlesFromImage();
+                
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                animate();
+            }
+        }
+        
+        function createParticlesFromImage() {
+            if (!logoImage) return;
+            
+            // Determine scale to fit the image nicely on the screen
+            const scale = Math.min(canvas.width / logoImage.naturalWidth, canvas.height / logoImage.naturalHeight) * LOGO_SCALE_FACTOR;
+            const drawWidth = logoImage.naturalWidth * scale;
+            const drawHeight = logoImage.naturalHeight * scale;
+
+            // 3. Create a temporary canvas
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCanvas.width = drawWidth;
+            tempCanvas.height = drawHeight;
+
+            // 4. Draw the scaled image onto the temporary canvas
+            tempCtx.drawImage(
+                logoImage, 
+                0, 
+                0, 
+                drawWidth, 
+                drawHeight
+            );
+            
+            // 5. Sample the particles from the drawn image
+            sampleParticles(tempCtx, drawWidth, drawHeight);
+        }
+        
+        // --- Animation Loop ---
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time += IDLE_SPEED;
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Function to change logo size
+        function changeLogoSize(newScale) {
+            LOGO_SCALE_FACTOR = newScale;
+            document.getElementById('size-info').textContent = `Logo Scale: ${Math.round(newScale * 100)}%`;
+            init();
+        }
+
+        // --- Event Listeners ---
+        function handleMouseMove(event) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+        }
+
+        window.onload = function() {
+            init();
+            window.addEventListener('resize', init);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                handleMouseMove(e.touches[0]);
+            });
+            canvas.addEventListener('touchend', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+        };
+    </script>
+
+</body>
+</html>

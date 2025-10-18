@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Training - GOLDEN HANDS Premium Driving School</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        /* Custom scrollbar for better aesthetics on dark theme */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        /* Service specific styles */
+        .service-hero-bg {
+            background: linear-gradient(135deg, #111111 0%, #000000 50%, #1a1a1a 100%);
+        }
+        
+        .service-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 15px 30px rgba(255, 193, 7, 0.1);
+        }
+        
+        .service-icon {
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover .service-icon {
+            background: rgba(255, 193, 7, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .form-input {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+            background: rgba(26, 26, 26, 0.9);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #FFC107 0%, #f59e0b 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+        }
+    </style>
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        // Form handling
+        function handleServiceBooking(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const firstName = formData.get('firstName');
+            const address = formData.get('address');
+            const service = formData.get('service');
+            const phone = formData.get('phone');
+            const message = formData.get('message');
+            
+            // Simple validation
+            if (!firstName || !address || !service || !phone) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Simulate form submission
+            showMessage('Thank you for booking our service! We will contact you within 24 hours.', 'success');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        function showMessage(message, type = 'success') {
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.remove();
+            }, 5000);
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Initialize form submission
+            document.getElementById('booking-form').addEventListener('submit', handleServiceBooking);
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+        };
+    </script>
+</head>
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Logo - Centered on mobile, left on desktop -->
+                <a href="index.html" class="text-3xl font-extrabold tracking-widest text-center w-full lg:w-auto lg:text-left">
+                    <span class="text-white">GOLDEN</span>
+                    <span class="text-broto-yellow">HANDS</span>
+                </a>
+                
+                <!-- Desktop Menu Items -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium">
+                    <a href="index.html" class="hover:text-broto-yellow transition duration-300">Home</a>
+                    <a href="driving-training.html" class="text-broto-yellow font-semibold">Driving Training</a>
+                    <a href="driving-license.html" class="hover:text-broto-yellow transition duration-300">Driving License</a>
+                    <a href="car-buying.html" class="hover:text-broto-yellow transition duration-300">Car Buying</a>
+                    <a href="rto-services.html" class="hover:text-broto-yellow transition duration-300">RTO Services</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Contact</a>
+                </div>
+                
+                <!-- CTA Button -->
+                <a href="#book-service" class="hidden md:block bg-broto-yellow text-broto-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
+                    Book Service
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="service-hero-bg py-20 lg:py-28 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
+                    Driving <span class="text-broto-yellow">Training</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+                    Master the road with our comprehensive driving training programs. From complete beginners to experienced drivers looking to refine their skills.
+                </p>
+                <a href="#services" class="bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105">
+                    Explore Programs
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section id="services" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Our Driving <span class="text-broto-yellow">Training Programs</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Choose from our range of professional driving training programs designed for every skill level and requirement.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Basic Driving Training -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="car" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Basic Driving Training</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Perfect for absolute beginners. Learn driving fundamentals from scratch with our patient, certified instructors.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Vehicle controls and operations</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Road signs and traffic rules</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Basic maneuvers and parking</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>City driving fundamentals</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl">Starting at ₹3000</span>
+                    </div>
+                </div>
+                
+                <!-- Refresher Course -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="refresh-cw" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Refresher Course</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        For licensed drivers who want to regain confidence or improve specific driving skills after a break.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Skill assessment and improvement</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Advanced parking techniques</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Highway driving practice</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Night driving skills</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl">Starting at ₹2500</span>
+                    </div>
+                </div>
+                
+                <!-- Defensive Driving -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="shield" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Defensive Driving</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Advanced training to anticipate hazards and prevent accidents. Essential for safe driving in all conditions.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Hazard recognition and avoidance</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Emergency braking techniques</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Skid control and recovery</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Adverse weather driving</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl">Starting at ₹4000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fees Section -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8 tracking-wider text-center">
+                CHOOSE YOUR <span class="text-broto-yellow">DRIVING PACKAGE</span>
+            </h2>
+
+            <div class="overflow-x-auto rounded-xl shadow-2xl">
+                <table class="w-full min-w-max border-collapse">
+                    <thead class="bg-broto-yellow text-broto-black uppercase text-sm">
+                        <tr>
+                            <th class="p-4 text-left font-black">Packages</th>
+                            <th class="p-4 text-center font-black">Package 1</th>
+                            <th class="p-4 text-center font-black">Package 2</th>
+                            <th class="p-4 text-center font-black">Package 3</th>
+                            <th class="p-4 text-center font-black">Package 4</th>
+                            <th class="p-4 text-center font-black">Package 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Price Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Price (INR)</td>
+                            <td class="p-4 text-center">₹3000</td>
+                            <td class="p-4 text-center">₹3500</td>
+                            <td class="p-4 text-center">₹4500</td>
+                            <td class="p-4 text-center">₹4500</td>
+                            <td class="p-4 text-center">₹5000</td>
+                        </tr>
+                        <!-- Practical Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Practical Lessons (Hrs)</td>
+                            <td class="p-4 text-center">10</td>
+                            <td class="p-4 text-center">15</td>
+                            <td class="p-4 text-center">15</td>
+                            <td class="p-4 text-center">20</td>
+                            <td class="p-4 text-center">24</td>
+                        </tr>
+                        <!-- Theory Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Theory Classes (Hrs)</td>
+                            <td class="p-4 text-center">3</td>
+                            <td class="p-4 text-center">5</td>
+                            <td class="p-4 text-center">5</td>
+                            <td class="p-4 text-center">7</td>
+                            <td class="p-4 text-center">10</td>
+                        </tr>
+                        <!-- Home Pickup & Drop Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Home Pickup & Drop</td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                        </tr>
+                        <!-- Vehicle Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Vehicle</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">Altroz</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                        </tr>
+                        <!-- Trail Driving Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Trail Driving (Days)</td>
+                            <td class="p-4 text-center">1</td>
+                            <td class="p-4 text-center">2</td>
+                            <td class="p-4 text-center">2</td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                        </tr>
+                        <!-- Training Time Row -->
+                        <tr class="bg-broto-dark text-white">
+                            <td class="p-4 font-bold text-broto-yellow">Training Time</td>
+                            <td class="p-4 text-center text-xs">8AM - 10AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Service Section -->
+    <section id="book-service" class="py-16 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Book Your <span class="text-broto-yellow">Driving Training</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Fill out the form below and we'll contact you to schedule your training</p>
+            </div>
+            
+            <div class="bg-broto-black p-8 rounded-2xl">
+                <form id="booking-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">Your Name *</label>
+                            <input type="text" id="Name" name="firstName" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address *</label>
+                            <input type="text" id="address" name="address" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">Select Service *</label>
+                            <select id="service" name="service" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <option value="">Choose a service</option>
+                                <option value="basic-training">Basic Driving Training</option>
+                                <option value="refresher-course">Refresher Course</option>
+                                <option value="defensive-driving">Defensive Driving</option>
+                                <option value="package-1">Package 1 (10 Hrs) - ₹3000</option>
+                                <option value="package-2">Package 2 (15 Hrs) - ₹3500</option>
+                                <option value="package-3">Package 3 (Altroz) - ₹4500</option>
+                                <option value="package-4">Package 4 (20 Hrs) - ₹4500</option>
+                                <option value="package-5">Package 5 (24 Hrs) - ₹5000</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Write Something (Optional)</label>
+                        <textarea id="message" name="message" rows="4" 
+                            class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow" 
+                            placeholder="Any specific requirements or questions..."></textarea>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="submit-btn w-full text-broto-black font-bold text-lg p-4 rounded-xl transition duration-300">
+                        Book Service Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
+                <!-- Column 1: Logo & Social -->
+                <div>
+                    <a href="../index.html" class="text-2xl font-extrabold tracking-widest mb-4 block">
+                        <span class="text-white">GOLDEN</span>
+                        <span class="text-broto-yellow">HANDS</span>
+                    </a>
+                    <p class="text-gray-400 text-sm mb-4">
+                        GOLDEN HANDS Driving School. Your path to becoming a safe, skilled, and confident driver.
+                    </p>
+                    <div class="flex space-x-3 text-broto-yellow">
+                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" class="w-5 h-5 hover:text-white transition"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-broto-yellow transition">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-broto-yellow transition">About Us</a></li>
+                        <li><a href="index.html#gallery-section" class="text-gray-400 hover:text-broto-yellow transition">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-broto-yellow transition">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Services -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="driving-training.html" class="text-gray-400 hover:text-broto-yellow transition">Driving Training</a></li>
+                        <li><a href="driving-license.html" class="text-gray-400 hover:text-broto-yellow transition">Driving Licence</a></li>
+                        <li><a href="car-buying.html" class="text-gray-400 hover:text-broto-yellow transition">Car Buying Consultant</a></li>
+                        <li><a href="rto-services.html" class="text-gray-400 hover:text-broto-yellow transition">RTO Service</a></li>
+                        <li><a href="index.html#fees-section" class="text-gray-400 hover:text-broto-yellow transition">Packages & Fees</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 & 5: Contact & Branding -->
+                <div class="col-span-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
+                            <p class="text-gray-400 text-sm mb-2">Office: C-3/12, Palam Vihar, New Delhi - 110045</p>
+                            <a href="tel:+918144600000" class="text-broto-yellow hover:text-white font-medium block">+91 8144600000</a>
+                            <a href="mailto:info@goldenhands.in" class="text-broto-yellow hover:text-white font-medium block">info@goldenhands.in</a>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
+                            <img src="https://placehold.co/150x80/FFC107/000000?text=LEARN+&+DRIVE" alt="Learn & Drive Logo" class="w-36 h-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Copyright Section) -->
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 GOLDEN HANDS Driving School. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDI Pre-Delivery Inspection - SysDriving Premium Services</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        /* Custom scrollbar for better aesthetics on dark theme */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        /* Service specific styles */
+        .service-hero-bg {
+            background: linear-gradient(135deg, #111111 0%, #000000 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated background elements */
+        .floating-car {
+            position: absolute;
+            animation: floatCar 25s linear infinite;
+            opacity: 0.1;
+            font-size: 6rem;
+            color: #ffc107;
+        }
+        
+        @keyframes floatCar {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotate(360deg); }
+        }
+        
+        .service-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .service-card:hover::before {
+            left: 100%;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 20px 40px rgba(255, 193, 7, 0.15);
+        }
+        
+        .service-icon {
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,193,7,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .service-card:hover .service-icon {
+            background: rgba(255, 193, 7, 0.2);
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .service-card:hover .service-icon::after {
+            opacity: 1;
+        }
+        
+        .form-input {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .form-input:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+            background: rgba(26, 26, 26, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #FFC107 0%, #f59e0b 100%);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 25px rgba(255, 193, 7, 0.4);
+        }
+        
+        /* Text animation */
+        .animate-text {
+            background: linear-gradient(90deg, #ffc107, #f59e0b, #ffc107);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+        
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Pulse animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .pulse {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        /* Slide in animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+        
+        .slide-in-up {
+            animation: slideInUp 1s ease-out forwards;
+        }
+        
+        /* Stagger animation delays */
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+        .stagger-6 { animation-delay: 0.6s; opacity: 0; }
+        
+        /* Glow effect */
+        .glow {
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+            animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glowPulse {
+            from {
+                box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 193, 7, 0.6);
+            }
+        }
+        
+        /* Document animation */
+        .inspection-float {
+            position: absolute;
+            animation: inspectionFloat 20s linear infinite;
+            opacity: 0.07;
+            font-size: 5rem;
+            color: #ffc107;
+        }
+        
+        @keyframes inspectionFloat {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            50% { transform: translateY(100px) rotate(180deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        /* Image gallery styles */
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+        }
+        
+        .image-container img {
+            transition: transform 0.5s ease;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+        
+        .image-container:hover .image-overlay {
+            transform: translateY(0);
+        }
+        
+        /* Quote section styles */
+        .quote-section {
+            background: linear-gradient(135deg, rgba(255,193,7,0.1) 0%, rgba(255,193,7,0.05) 100%);
+            border-left: 4px solid #ffc107;
+        }
+        
+        /* Inspection checklist styles */
+        .checklist-item {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .checklist-item:hover {
+            background: rgba(255,193,7,0.05);
+            transform: translateX(5px);
+        }
+        
+        /* Stats counter animation */
+        .stat-number {
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffc107, #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Process step styles */
+        .process-step {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .process-step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -20px;
+            width: 40px;
+            height: 40px;
+            background: #ffc107;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        
+        .process-step:first-child::before {
+            display: none;
+        }
+        
+        /* Testimonial styles */
+        .testimonial-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.1);
+        }
+    </style>
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        // Form handling
+        function handleServiceBooking(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const firstName = formData.get('firstName');
+            const address = formData.get('address');
+            const service = formData.get('service');
+            const phone = formData.get('phone');
+            const message = formData.get('message');
+            
+            // Simple validation
+            if (!firstName || !address || !service || !phone) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Add submission animation
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto"></i> Processing...';
+            lucide.createIcons();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                showMessage('Thank you for booking our PDI service! We will contact you within 24 hours.', 'success');
+                
+                // Reset form and button
+                event.target.reset();
+                submitBtn.innerHTML = 'Book Inspection Now';
+            }, 2000);
+        }
+
+        function showMessage(message, type = 'success') {
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Stats counter animation
+        function animateCounter(element, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target + (element.id === 'cars-inspected' ? '+' : '%');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start) + (element.id === 'cars-inspected' ? '+' : '%');
+                }
+            }, 16);
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Initialize form submission
+            document.getElementById('booking-form').addEventListener('submit', handleServiceBooking);
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Add staggered animations to service cards
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach((card, index) => {
+                card.classList.add('stagger-' + (index + 1));
+                card.classList.add('slide-in-up');
+            });
+            
+            // Add hover effect to navigation
+            const navItems = document.querySelectorAll('nav a');
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        
+                        // Animate counters when stats section is visible
+                        if (entry.target.id === 'stats-section') {
+                            animateCounter(document.getElementById('cars-inspected'), 1250, 2000);
+                            animateCounter(document.getElementById('defects-found'), 98, 2000);
+                            animateCounter(document.getElementById('client-satisfaction'), 99, 2000);
+                        }
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all animated elements
+            document.querySelectorAll('.slide-in-up, .slide-in-left, .slide-in-right').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Observe stats section
+            const statsSection = document.getElementById('stats-section');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+        };
+    </script>
+</head>
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="text-3xl font-extrabold tracking-widest text-broto-yellow hover:scale-105 transition-transform duration-300">
+                    SYSMOTOR
+                </a>
+                
+                <!-- Desktop Menu Items -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium">
+                    <a href="index.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Home</a>
+                    <a href="driving-training.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Driving Training</a>
+                    <a href="driving-license.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Driving License</a>
+                    <a href="car-buying.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Car Buying</a>
+                    <a href="rto-services.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">RTO Services</a>
+                    <a href="pdi-services.html" class="text-broto-yellow font-semibold transform scale-105">PDI Services</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Contact</a>
+                </div>
+                
+                <!-- CTA Button -->
+                <a href="#book-service" class="hidden md:block bg-broto-yellow text-broto-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300 transform hover:scale-105 pulse">
+                    Book Inspection
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="service-hero-bg py-20 lg:py-28 relative overflow-hidden">
+        <!-- Animated background elements -->
+        <div class="floating-car" style="top: 15%; animation-delay: 0s;">
+            <i data-lucide="car"></i>
+        </div>
+        <div class="floating-car" style="top: 65%; animation-delay: 8s;">
+            <i data-lucide="car"></i>
+        </div>
+        <div class="inspection-float" style="left: 10%; animation-delay: 4s;">
+            <i data-lucide="clipboard-check"></i>
+        </div>
+        <div class="inspection-float" style="left: 80%; animation-delay: 12s;">
+            <i data-lucide="clipboard-check"></i>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center slide-in-up">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
+                    PDI <span class="animate-text">Inspection</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 slide-in-up stagger-1">
+                    Don't accept surprises with your new car. Get it inspected with our trusted PDI services.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 slide-in-up stagger-2">
+                    <a href="#services" class="bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105 glow">
+                        View Services
+                    </a>
+                    <a href="#book-service" class="border border-broto-yellow text-broto-yellow font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-yellow hover:text-broto-black transition duration-300 transform hover:scale-105">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="py-12 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="quote-section p-8 rounded-2xl slide-in-up">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/4 flex justify-center mb-6 md:mb-0">
+                        <div class="service-icon w-20 h-20 rounded-full flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-10 h-10 text-broto-yellow"></i>
+                        </div>
+                    </div>
+                    <div class="md:w-3/4 text-center md:text-left">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-4">Don't Accept Surprises With Your New Car</h2>
+                        <p class="text-lg text-gray-300">Get it inspected with our trusted PDI services. Our comprehensive pre-delivery inspection ensures your new vehicle is perfect before you take ownership.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Gallery Section -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Our <span class="animate-text">Inspection Process</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    See how our comprehensive PDI service ensures your new car is in perfect condition
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Image 1 -->
+                <div class="image-container h-64 slide-in-up stagger-1">
+                    <img src="https://images.unsplash.com/photo-1621135802920-133df287f89c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Exterior Inspection" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Exterior Inspection</h3>
+                        <p class="text-gray-300">Checking paint, body panels, and exterior components</p>
+                    </div>
+                </div>
+                
+                <!-- Image 2 -->
+                <div class="image-container h-64 slide-in-up stagger-2">
+                    <img src="https://images.unsplash.com/photo-1603712610494-7cebea1ab550?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Interior Inspection" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Interior Inspection</h3>
+                        <p class="text-gray-300">Testing all interior features and electronics</p>
+                    </div>
+                </div>
+                
+                <!-- Image 3 -->
+                <div class="image-container h-64 slide-in-up stagger-3">
+                    <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Engine Inspection" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Engine Inspection</h3>
+                        <p class="text-gray-300">Comprehensive engine and mechanical checks</p>
+                    </div>
+                </div>
+                
+                <!-- Image 4 -->
+                <div class="image-container h-64 slide-in-up stagger-4">
+                    <img src="https://images.unsplash.com/photo-1563720223480-1d81b34f2a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Test Drive" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Test Drive</h3>
+                        <p class="text-gray-300">Road testing for performance and handling</p>
+                    </div>
+                </div>
+                
+                <!-- Image 5 -->
+                <div class="image-container h-64 slide-in-up stagger-5">
+                    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Undercarriage Inspection" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Undercarriage Inspection</h3>
+                        <p class="text-gray-300">Checking suspension, exhaust, and underbody</p>
+                    </div>
+                </div>
+                
+                <!-- Image 6 -->
+                <div class="image-container h-64 slide-in-up stagger-6">
+                    <img src="https://images.unsplash.com/photo-1603712610494-7cebea1ab550?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Final Report" class="w-full h-full object-cover">
+                    <div class="image-overlay">
+                        <h3 class="text-xl font-bold text-white">Detailed Report</h3>
+                        <p class="text-gray-300">Comprehensive inspection report with findings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section id="services" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Comprehensive <span class="animate-text">PDI Services</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Our pre-delivery inspection covers every aspect of your new vehicle to ensure it's in perfect condition.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Exterior Inspection -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="car" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Exterior Inspection</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Comprehensive check of all exterior components and bodywork.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Paint quality and consistency</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Body panel alignment</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Glass and windshield condition</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Tire and wheel inspection</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in Full PDI</span>
+                    </div>
+                </div>
+                
+                <!-- Interior Inspection -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="settings" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Interior Inspection</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Detailed inspection of all interior features and electronics.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Upholstery and trim condition</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>All electronic features tested</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Climate control system</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Infotainment and audio systems</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in Full PDI</span>
+                    </div>
+                </div>
+                
+                <!-- Mechanical Inspection -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="wrench" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Mechanical Inspection</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Thorough check of engine, transmission, and mechanical components.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Engine performance and sounds</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Transmission operation</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Brake system inspection</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Suspension and steering check</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in Full PDI</span>
+                    </div>
+                </div>
+                
+                <!-- Road Test -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="navigation" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Comprehensive Road Test</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Real-world testing to evaluate performance and handling.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Acceleration and braking tests</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Steering response and alignment</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Noise and vibration analysis</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Transmission shift quality</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in Full PDI</span>
+                    </div>
+                </div>
+                
+                <!-- Documentation Review -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="file-text" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Documentation Review</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Verification of all vehicle documents and warranty information.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Vehicle registration documents</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Warranty and service book verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Owner's manual and accessories</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Service history review</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in Full PDI</span>
+                    </div>
+                </div>
+                
+                <!-- Final Report -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="clipboard-check" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Detailed Inspection Report</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Comprehensive report with findings, photos, and recommendations.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Detailed findings with photos</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Priority-based issue categorization</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Recommendations for resolution</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Digital and printed copies</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Included in All Services</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats-section" class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="slide-in-up stagger-1">
+                    <div class="stat-number text-5xl md:text-6xl font-black mb-2" id="cars-inspected">0</div>
+                    <p class="text-gray-400 text-lg">Cars Inspected</p>
+                </div>
+                <div class="slide-in-up stagger-2">
+                    <div class="stat-number text-5xl md:text-6xl font-black mb-2" id="defects-found">0%</div>
+                    <p class="text-gray-400 text-lg">Defects Found</p>
+                </div>
+                <div class="slide-in-up stagger-3">
+                    <div class="stat-number text-5xl md:text-6xl font-black mb-2" id="client-satisfaction">0%</div>
+                    <p class="text-gray-400 text-lg">Client Satisfaction</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspection Process -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Our <span class="animate-text">Inspection Process</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    We follow a meticulous 5-step process to ensure your new car is thoroughly inspected
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div class="process-step text-center slide-in-up stagger-1">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-broto-yellow font-bold text-xl">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Initial Consultation</h3>
+                    <p class="text-gray-400">We discuss your requirements and schedule the inspection</p>
+                </div>
+                
+                <div class="process-step text-center slide-in-up stagger-2">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-broto-yellow font-bold text-xl">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Exterior & Interior Check</h3>
+                    <p class="text-gray-400">Comprehensive inspection of all visible components</p>
+                </div>
+                
+                <div class="process-step text-center slide-in-up stagger-3">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-broto-yellow font-bold text-xl">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Mechanical Inspection</h3>
+                    <p class="text-gray-400">Engine, transmission, brakes, and suspension checks</p>
+                </div>
+                
+                <div class="process-step text-center slide-in-up stagger-4">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-broto-yellow font-bold text-xl">4</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Road Test</h3>
+                    <p class="text-gray-400">Real-world performance and handling evaluation</p>
+                </div>
+                
+                <div class="process-step text-center slide-in-up stagger-5">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-broto-yellow font-bold text-xl">5</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Detailed Report</h3>
+                    <p class="text-gray-400">Comprehensive report with findings and recommendations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    What Our <span class="animate-text">Clients Say</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Don't just take our word for it - hear from our satisfied customers
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card p-6 rounded-2xl slide-in-up stagger-1">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-broto-yellow rounded-full flex items-center justify-center mr-4">
+                            <span class="text-broto-black font-bold">RS</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Rahul Sharma</h4>
+                            <p class="text-gray-400 text-sm">New Delhi</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"The PDI service saved me from accepting a car with multiple paint defects. The detailed report helped me get them fixed before delivery."</p>
+                    <div class="flex text-broto-yellow">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-6 rounded-2xl slide-in-up stagger-2">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-broto-yellow rounded-full flex items-center justify-center mr-4">
+                            <span class="text-broto-black font-bold">PK</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Priya Khanna</h4>
+                            <p class="text-gray-400 text-sm">Gurgaon</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"I was about to buy a car with alignment issues. The inspection caught it and saved me from future headaches. Highly recommended!"</p>
+                    <div class="flex text-broto-yellow">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-6 rounded-2xl slide-in-up stagger-3">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-broto-yellow rounded-full flex items-center justify-center mr-4">
+                            <span class="text-broto-black font-bold">AS</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Ankit Singh</h4>
+                            <p class="text-gray-400 text-sm">Noida</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4">"The comprehensive inspection gave me peace of mind. I knew exactly what I was getting and could negotiate better based on the findings."</p>
+                    <div class="flex text-broto-yellow">
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Service Section -->
+    <section id="book-service" class="py-16 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Book Your <span class="animate-text">PDI Inspection</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Fill out the form below and we'll schedule your pre-delivery inspection</p>
+            </div>
+            
+            <div class="bg-broto-black p-8 rounded-2xl glow slide-in-up">
+                <form id="booking-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="slide-in-left">
+                            <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your first name">
+                        </div>
+                        <div class="slide-in-right">
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address *</label>
+                            <input type="text" id="address" name="address" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your complete address">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="slide-in-left">
+                            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">Select Service *</label>
+                            <select id="service" name="service" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <option value="">Choose a service</option>
+                                <option value="basic-pdi">Basic PDI (Exterior & Interior)</option>
+                                <option value="comprehensive-pdi">Comprehensive PDI (Full Inspection)</option>
+                                <option value="premium-pdi">Premium PDI (With Road Test)</option>
+                                <option value="document-review">Documentation Review Only</option>
+                            </select>
+                        </div>
+                        <div class="slide-in-right">
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your phone number">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-in-up">
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Vehicle Details (Optional)</label>
+                        <textarea id="message" name="message" rows="4" 
+                            class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow" 
+                            placeholder="Tell us about your vehicle (make, model, year, etc.)..."></textarea>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="submit-btn w-full text-broto-black font-bold text-lg p-4 rounded-xl transition duration-300 slide-in-up">
+                        Book Inspection Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
+                <!-- Column 1: Logo & Social -->
+                <div class="slide-in-left">
+                    <a href="index.html" class="text-2xl font-extrabold tracking-widest text-broto-yellow mb-4 block hover:scale-105 transition-transform duration-300">
+                        SYSMOTOR
+                    </a>
+                    <p class="text-gray-400 text-sm mb-4">
+                        SYSMOTOR Driving School. Your path to becoming a safe, skilled, and confident driver.
+                    </p>
+                    <div class="flex space-x-3 text-broto-yellow">
+                        <a href="#" aria-label="Facebook" class="hover:scale-110 transition-transform duration-300"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Instagram" class="hover:scale-110 transition-transform duration-300"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Twitter" class="hover:scale-110 transition-transform duration-300"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="LinkedIn" class="hover:scale-110 transition-transform duration-300"><i data-lucide="linkedin" class="w-5 h-5 hover:text-white transition"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="slide-in-up">
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">About Us</a></li>
+                        <li><a href="index.html#gallery-section" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Services -->
+                <div class="slide-in-up">
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="driving-training.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Driving Training</a></li>
+                        <li><a href="driving-license.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Driving Licence</a></li>
+                        <li><a href="car-buying.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Car Buying Consultant</a></li>
+                        <li><a href="rto-services.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">RTO Service</a></li>
+                        <li><a href="pdi-services.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">PDI Services</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 & 5: Contact & Branding -->
+                <div class="col-span-2 slide-in-right">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
+                            <p class="text-gray-400 text-sm mb-2">Office: C-3/12, Palam Vihar, New Delhi - 110045</p>
+                            <a href="tel:+918144600000" class="text-broto-yellow hover:text-white font-medium block transform hover:translate-x-1 duration-300">+91 8144600000</a>
+                            <a href="mailto:info@Sysmotor.in" class="text-broto-yellow hover:text-white font-medium block transform hover:translate-x-1 duration-300">info@Sysmotor.in</a>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
+                            <div class="bg-broto-yellow/20 p-3 rounded-lg hover:scale-105 transition-transform duration-300">
+                                <span class="text-broto-yellow font-bold">LEARN & DRIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Copyright Section) -->
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 SysDriving School. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Terms and Conditions</a>
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

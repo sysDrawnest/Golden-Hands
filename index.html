@@ -1,0 +1,2711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SysDriving - Premium Driving School</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        /* Custom scrollbar for better aesthetics on dark theme */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        /* --- Fixed Hero Slideshow CSS --- */
+        .hero-slides-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .hero-slides-wrapper {
+            display: flex;
+            width: 400%; /* 4 slides */
+            height: 100%;
+            transition: transform 1s ease-in-out; /* Slower transition */
+        }
+        
+        .hero-slide {
+            width: 25%; /* Each slide takes 25% of the wrapper */
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+        }
+        
+        /* Slide Indicators */
+        .slide-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .slide-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .slide-indicator.active {
+            background-color: #FFC107;
+        }
+        
+        /* Touch/swipe area */
+        .touch-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        /* --- Logo Animation CSS (Golden Hands Dust Effect) --- */
+        @keyframes dustDissolve {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); filter: blur(0); }
+            100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0.5); filter: blur(5px); }
+        }
+        .logo-particle {
+            position: absolute;
+            transition: all 0.05s ease-out; /* For quick response to mouse click */
+        }
+        .logo-dissolve {
+            animation: dustDissolve 1.2s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+        }
+        .logo-hands { color: white; }
+        .logo-golden { color: #FFC107; }
+
+        /* --- NEW Canvas Particle Animation Styles --- */
+        .particle-section {
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .particle-canvas {
+            display: block;
+            width: 100%;
+            height: 400px;
+        }
+
+        /* --- General CSS from previous versions --- */
+        .hero-overlay { 
+            background-color: rgba(0, 0, 0, 0.7); 
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        input:focus, textarea:focus, select:focus { border-color: #ffc107 !important; box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5) !important; }
+        .dropdown-menu { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; }
+        .dropdown-menu.active { max-height: 400px; opacity: 1; pointer-events: auto; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .scrolling-wrapper { overflow: hidden; width: 100%; padding: 2rem 0; }
+        .scrolling-track { display: flex; width: fit-content; animation: scroll 70s linear infinite; }
+        .scrolling-track:hover { animation-play-state: paused; }
+        .scroll-item-review { flex-shrink: 0; width: 300px; margin-right: 1.5rem; }
+        .slide { transition: opacity 0.5s ease-in-out; opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .slide.active { opacity: 1; position: relative; }
+        .slideshow-container { position: relative; max-width: 100%; overflow: hidden; }
+        #mobile-menu-drawer { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        #mobile-menu-drawer.active { transform: translateX(0); }
+        .accordion-content { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; overflow: hidden; opacity: 0; }
+        .accordion-content.active { max-height: 500px; opacity: 1; }
+        .why-choose-us-bg { background-color: #111111; }
+        .book-lesson-banner { background-color: #D92323; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 100 100"><defs><pattern id="tire-tread" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="4" height="10" fill="rgba(0,0,0,0.1)" transform="rotate(45)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23tire-tread)"/></svg>'); background-size: 500px 500px; overflow: hidden; position: relative; }
+        .tire-mark { position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: repeating-linear-gradient( -45deg, #000, #000 10px, rgba(0, 0, 0, 0.6) 10px, rgba(0, 0, 0, 0.6) 20px ); transform: skewY(-5deg); transform-origin: bottom left; z-index: 1; }
+        @keyframes slideInRight { 0% { transform: translate(100%, 20px); opacity: 0; } 100% { transform: translate(0, 20px); opacity: 1; } }
+        .benefit-icon-box:hover .benefit-icon { transform: scale(1.1); color: #FFC107; }
+        .car-image-animated { animation: slideInRight 1s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .team-card { background: #1a1a1a; border-radius: 20px; padding: 40px 30px; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; }
+        .team-card:nth-child(1) { animation-delay: 0.1s; }
+        .team-card:nth-child(2) { animation-delay: 0.2s; }
+        .team-card:nth-child(3) { animation-delay: 0.3s; }
+        .team-card:nth-child(4) { animation-delay: 0.4s; }
+        .team-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #FFC107 0%, #f59e0b 100%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; }
+        .team-card:hover::before { opacity: 1; }
+        .team-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(255, 193, 7, 0.3); }
+        .card-content { position: relative; z-index: 1; }
+        .team-card:hover .card-content * { color: #000 !important; }
+        .profile-image { width: 180px; height: 180px; border-radius: 50%; margin: 0 auto 25px; overflow: hidden; border: 4px solid #FFC107; transition: all 0.4s ease; }
+        .team-card:hover .profile-image { border-color: #000; transform: scale(1.05); }
+        .profile-image img { width: 100%; height: 100%; object-fit: cover; }
+        .member-name { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 10px; transition: color 0.4s ease; }
+        .member-role { font-size: 14px; font-weight: 600; color: #FFC107; letter-spacing: 1px; margin-bottom: 25px; transition: color 0.4s ease; }
+        .team-card:hover .member-role { color: #000 !important; }
+        .social-links { display: flex; justify-content: center; gap: 12px; margin-bottom: 25px; }
+        .social-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #FFC107; color: #000; transition: all 0.3s ease; cursor: pointer; }
+        .social-icon:hover { transform: translateY(-3px) scale(1.1); background: #f59e0b; }
+        .team-card:hover .social-icon { background: #000; color: #FFC107; }
+        .team-card:hover .social-icon:hover { background: #1a1a1a; color: #FFC107; }
+        .member-bio { font-size: 15px; line-height: 1.6; color: #a0a0a0; transition: color 0.4s ease; }
+        .team-card:hover .member-bio { color: #000 !important; }
+
+        /* New Driving Gallery Styles */
+        .driving-gallery-container {
+            padding: 1rem;
+            background: #000000;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .driving-gallery {
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            background: #000;
+        }
+        
+        .driving-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(1.05);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .driving-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .driving-slide-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .driving-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .driving-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 1.5rem 1rem 1rem;
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+        
+        .driving-slide.active .driving-caption {
+            transform: translateY(0);
+        }
+        
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 193, 7, 0.5);
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: rgba(255, 193, 7, 0.8);
+            transform: scale(1.1);
+        }
+        
+        .thumbnail-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: #ffc107 #333;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 3px;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar-thumb {
+            background: #ffc107;
+            border-radius: 3px;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+        
+        .thumbnail:hover {
+            opacity: 0.8;
+        }
+        
+        .thumbnail.active {
+            opacity: 1;
+            border-color: #ffc107;
+        }
+        
+        .thumbnail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #ffc107;
+            width: 0%;
+            transition: width 0.1s linear;
+            z-index: 10;
+        }
+        
+        .services-gallery {
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .services-scroll {
+            position: absolute;
+            display: flex;
+            animation: scrollLeft 20s linear infinite;
+        }
+        
+        .services-scroll:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .service-img {
+            width: 200px;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+            display: block;
+        }
+        
+        .gallery-container {
+            gap: 0.75rem;
+        }
+        
+        .service-card-padding {
+            padding: 0.75rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .driving-gallery {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .driving-gallery {
+                height: 250px;
+            }
+            
+            .thumbnail {
+                width: 70px;
+                height: 50px;
+            }
+        }
+
+        /* Mobile dropdown menu styles */
+        #mobile-services-dropdown {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #mobile-services-dropdown.active {
+            max-height: 400px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        /* Time Slot Modal Styles */
+        .time-slot-modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .time-slot-modal.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .time-slot-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .time-slot-option:hover {
+            background-color: #FFC107;
+            color: #000;
+        }
+
+        .time-slot-option.selected {
+            background-color: #FFC107;
+            color: #000;
+            border-color: #FFC107;
+        }
+
+        .hidden-stage {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .scrolling-track { animation-duration: 90s; }
+            .scroll-item-review { width: 85vw; }
+            .tire-mark { display: none; }
+            .particle-canvas {
+                height: 300px;
+            }
+        }
+
+    .validation-input.error {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+    
+    .validation-input.success {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .validation-message {
+        transition: all 0.3s ease;
+    }
+
+    </style>
+
+
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        // --- Fixed Hero Slideshow Logic ---
+        let currentSlideIndex = 0;
+        const totalSlides = 4;
+        let slideInterval;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function initHeroSlideshow() {
+            // Set up auto-sliding
+            slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+            
+            // Set up touch/swipe events
+            const touchArea = document.getElementById('hero-touch-area');
+            if (touchArea) {
+                touchArea.addEventListener('touchstart', handleTouchStart, false);
+                touchArea.addEventListener('touchend', handleTouchEnd, false);
+            }
+            
+            // Set up indicator clicks
+            const indicators = document.querySelectorAll('.slide-indicator');
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            updateSlidePosition();
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            updateSlidePosition();
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+            updateSlidePosition();
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            updateSlidePosition();
+            resetInterval();
+        }
+
+        function updateSlidePosition() {
+            const slidesWrapper = document.getElementById('hero-slides-wrapper');
+            if (slidesWrapper) {
+                slidesWrapper.style.transform = `translateX(-${currentSlideIndex * 25}%)`;
+            }
+            
+            // Update active indicator
+            const indicators = document.querySelectorAll('.slide-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === currentSlideIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function handleTouchStart(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum distance for a swipe
+            
+            if (touchStartX - touchEndX > swipeThreshold) {
+                // Swipe left - next slide
+                nextSlide();
+                resetInterval();
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                // Swipe right - previous slide
+                prevSlide();
+                resetInterval();
+            }
+        }
+
+        // --- NEW Canvas Particle Animation Code ---
+        let particleCanvas, particleCtx;
+        let particles = [];
+        let particleMouse = { x: null, y: null, radius: 500 };
+        let isParticleAnimating = true;
+        let time = 0;
+
+        // Configuration
+        const IMAGE_FILE = 'golden hands.png'; 
+        const PARTICLE_SIZE = 1; 
+        const DENSITY = 2; // Lower number = more particles / higher resolution
+        const REPEL_RADIUS = 500; 
+        const REPEL_STRENGTH = 1.8;
+        const RETURN_STRENGTH = 0.05;
+        const IDLE_SPEED = 0.05;
+        const IDLE_SCALE = 0.05;
+        const LOGO_SCALE_FACTOR = 0.5; // Controls the size of the logo (0.5 = 50% of the maximum screen fit)
+
+        // Utility function to convert RGB to Hex
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, '0');
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.originalX = x;
+                this.originalY = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.mass = 1;
+                this.waveOffset = Math.random() * Math.PI * 2;
+                this.color = color; // Store particle's individual color
+            }
+
+            draw() {
+                particleCtx.fillStyle = this.color; // Use particle's individual color
+                particleCtx.beginPath();
+                particleCtx.arc(this.x, this.y, PARTICLE_SIZE, 0, Math.PI * 2);
+                particleCtx.fill();
+            }
+
+            update() {
+                // IDLE MOVEMENT
+                const idleVx = Math.sin(time + this.waveOffset) * IDLE_SCALE;
+                const idleVy = Math.cos(time + this.waveOffset * 0.5) * IDLE_SCALE;
+                this.vx += idleVx;
+                this.vy += idleVy;
+
+                // MOUSE REPULSION
+                let dx = particleMouse.x - this.x;
+                let dy = particleMouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < particleMouse.radius) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    const force = (particleMouse.radius - distance) / particleMouse.radius * REPEL_STRENGTH;
+                    this.vx -= forceDirectionX * force;
+                    this.vy -= forceDirectionY * force;
+                }
+
+                // RETURN TO ORIGINAL POSITION
+                const returnDx = this.originalX - this.x;
+                const returnDy = this.originalY - this.y;
+                this.vx += returnDx * RETURN_STRENGTH;
+                this.vy += returnDy * RETURN_STRENGTH;
+
+                // DAMPING/FRICTION
+                this.vx *= 0.9;
+                this.vy *= 0.9;
+
+                // UPDATE POSITION
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+        }
+
+        // Image sampling logic
+        function sampleParticles(tempCtx, drawWidth, drawHeight) {
+            const data = tempCtx.getImageData(0, 0, drawWidth, drawHeight).data;
+            const canvasWidth = particleCanvas.width;
+            const canvasHeight = particleCanvas.height;
+            
+            // Calculate offset to center the logo on the main canvas
+            const offsetX = (canvasWidth - drawWidth) / 2;
+            const offsetY = (canvasHeight - drawHeight) / 2;
+
+            for (let y = 0; y < drawHeight; y += DENSITY) {
+                for (let x = 0; x < drawWidth; x += DENSITY) {
+                    const index = (Math.floor(y) * drawWidth + Math.floor(x)) * 4;
+                    const alpha = data[index + 3];
+
+                    // Only create a particle if the pixel is visible (not fully transparent)
+                    if (alpha > 0) {
+                        const r = data[index];
+                        const g = data[index + 1];
+                        const b = data[index + 2];
+                        const color = rgbToHex(r, g, b); // Get the particle's color from the image
+
+                        // Particles are placed on the main canvas (x/y + offset)
+                        particles.push(new Particle(x + offsetX, y + offsetY, color));
+                    }
+                }
+            }
+        }
+
+        function initParticleCanvas() {
+            particleCanvas = document.getElementById('particleCanvas');
+            if (!particleCanvas) {
+                console.error('Canvas element not found');
+                return;
+            }
+            
+            particleCtx = particleCanvas.getContext('2d');
+
+            // Set canvas size
+            particleCanvas.width = particleCanvas.offsetWidth;
+            particleCanvas.height = 400;
+
+            console.log('Canvas initialized:', particleCanvas.width, particleCanvas.height);
+            
+            // Load the image
+            const logoImage = new Image();
+            logoImage.src = IMAGE_FILE; 
+
+            // Wait for the image to load
+            logoImage.onload = () => {
+                // Determine scale to fit the image nicely on the screen
+                const scale = Math.min(particleCanvas.width / logoImage.naturalWidth, particleCanvas.height / logoImage.naturalHeight) * LOGO_SCALE_FACTOR;
+                const drawWidth = logoImage.naturalWidth * scale;
+                const drawHeight = logoImage.naturalHeight * scale;
+
+                // Create a temporary canvas
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                tempCanvas.width = drawWidth;
+                tempCanvas.height = drawHeight;
+
+                // Draw the scaled image onto the temporary canvas
+                tempCtx.drawImage(
+                    logoImage, 
+                    0, 
+                    0, 
+                    drawWidth, 
+                    drawHeight
+                );
+                
+                // Sample the particles from the drawn image
+                sampleParticles(tempCtx, drawWidth, drawHeight);
+
+                // Start animation loop
+                if (particles.length > 0) {
+                    particleAnimate();
+                } else {
+                    console.error("No particles sampled. Check if the image loaded or if DENSITY is too high.");
+                }
+            };
+
+            logoImage.onerror = () => {
+                console.error(`Failed to load logo image from path: ${IMAGE_FILE}. Please check the file name and location.`);
+            };
+        }
+
+        function particleAnimate() {
+            if (!isParticleAnimating) return;
+            
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            time += IDLE_SPEED;
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            requestAnimationFrame(particleAnimate);
+        }
+
+        // Handle mouse movement for particles
+        function handleParticleMouseMove(e) {
+            const rect = particleCanvas.getBoundingClientRect();
+            particleMouse.x = e.clientX - rect.left;
+            particleMouse.y = e.clientY - rect.top;
+        }
+
+        // Handle window resize for particle canvas
+        function handleParticleResize() {
+            if (particleCanvas) {
+                particleCanvas.width = particleCanvas.offsetWidth;
+                particleCanvas.height = 400;
+                // Reinitialize particles on resize
+                particles = [];
+                initParticleCanvas();
+            }
+        }
+
+        // Gallery Slideshow Logic
+        let currentGallerySlide = 0;
+        let gallerySlides = [];
+        let galleryThumbnails = [];
+        let galleryProgressBar;
+        let gallerySlideInterval;
+        
+        function showGallerySlide(index) {
+            // Remove active class from all slides and thumbnails
+            gallerySlides.forEach(slide => slide.classList.remove('active'));
+            galleryThumbnails.forEach(thumb => thumb.classList.remove('active'));
+            
+            // Add active class to current slide and thumbnail
+            gallerySlides[index].classList.add('active');
+            galleryThumbnails[index].classList.add('active');
+            
+            currentGallerySlide = index;
+            
+            // Reset progress bar
+            if (galleryProgressBar) {
+                galleryProgressBar.style.width = '0%';
+            }
+        }
+        
+        function nextGallerySlide() {
+            let next = currentGallerySlide + 1;
+            if (next >= gallerySlides.length) next = 0;
+            showGallerySlide(next);
+        }
+        
+        function prevGallerySlide() {
+            let prev = currentGallerySlide - 1;
+            if (prev < 0) prev = gallerySlides.length - 1;
+            showGallerySlide(prev);
+        }
+        
+        function goToGallerySlide(index) {
+            showGallerySlide(index);
+            resetGalleryInterval();
+        }
+        
+        function resetGalleryInterval() {
+            clearInterval(gallerySlideInterval);
+            gallerySlideInterval = setInterval(nextGallerySlide, 5000);
+            
+            // Reset progress bar animation
+            if (galleryProgressBar) {
+                galleryProgressBar.style.width = '0%';
+                setTimeout(() => {
+                    galleryProgressBar.style.width = '100%';
+                }, 10);
+            }
+        }
+
+        function updateGalleryProgressBar() {
+            if (galleryProgressBar) {
+                galleryProgressBar.style.width = '100%';
+            }
+        }
+
+        // --- UI State Management ---
+        let isSearchOpen = false;
+        let isLoginModalOpen = false;
+        let isMobileMenuOpen = false;
+
+        // --- Dropdown/Menu Toggles ---
+        function toggleDropdown() {
+            const dropdown = document.getElementById('services-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function toggleSearch() {
+            isSearchOpen = !isSearchOpen;
+            const searchPanel = document.getElementById('search-panel');
+            searchPanel.classList.toggle('hidden', !isSearchOpen);
+            if (isSearchOpen) {
+                 document.getElementById('search-input').focus();
+            }
+        }
+
+        function toggleLoginModal(open) {
+            const modal = document.getElementById('login-modal');
+            isLoginModalOpen = (open !== undefined) ? open : !isLoginModalOpen;
+            modal.classList.toggle('hidden', !isLoginModalOpen);
+            document.body.classList.toggle('overflow-hidden', isLoginModalOpen);
+        }
+        
+        function toggleMobileMenu(open) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            isMobileMenuOpen = (open !== undefined) ? open : !isMobileMenuOpen;
+            drawer.classList.toggle('active', isMobileMenuOpen);
+            document.body.classList.toggle('overflow-hidden', isMobileMenuOpen);
+        }
+
+        // Mobile Services Dropdown Toggle
+        function toggleMobileServices() {
+            const dropdown = document.getElementById('mobile-services-dropdown');
+            const arrow = document.getElementById('mobile-services-arrow');
+            
+            dropdown.classList.toggle('active');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        // Time Slot Selection Logic
+        let selectedTimeSlot = null;
+        let selectedDetailedTime = null;
+
+        function toggleTimeSlotModal() {
+            const modal = document.getElementById('time-slot-modal');
+            const detailedTimeContainer = document.getElementById('detailed-time-container');
+            
+            modal.classList.toggle('active');
+            
+            // Hide detailed time container when modal closes
+            if (!modal.classList.contains('active')) {
+                detailedTimeContainer.classList.add('hidden-stage');
+            }
+        }
+
+        function selectTimeSlot(slot) {
+            selectedTimeSlot = slot;
+            const timeSlotDisplay = document.getElementById('time-slot-display');
+            timeSlotDisplay.textContent = slot;
+            
+            // Show detailed time slots
+            showDetailedTimeSlots(slot);
+        }
+
+        function showDetailedTimeSlots(slot) {
+            const detailedTimeContainer = document.getElementById('detailed-time-container');
+            const detailedSlotTitle = document.getElementById('detailed-slot-title');
+            const detailedTimeSlots = document.getElementById('detailed-time-slots');
+            
+            // Show the container
+            detailedTimeContainer.classList.remove('hidden-stage');
+            
+            // Set the title
+            detailedSlotTitle.textContent = `Available Slots for ${slot}`;
+            
+            // Clear existing slots
+            detailedTimeSlots.innerHTML = '';
+            
+            let timeSlots = [];
+            
+            if (slot === 'Morning (6AM - 11AM)') {
+                timeSlots = [
+                    '6:00 AM - 6:30 AM',
+                    '6:30 AM - 7:00 AM',
+                    '7:00 AM - 7:30 AM',
+                    '7:30 AM - 8:00 AM',
+                    '8:00 AM - 8:30 AM',
+                    '8:30 AM - 9:00 AM',
+                    '9:00 AM - 9:30 AM',
+                    '9:30 AM - 10:00 AM',
+                    '10:00 AM - 10:30 AM',
+                    '10:30 AM - 11:00 AM'
+                ];
+            } else if (slot === 'Afternoon (3PM - 7PM)') {
+                timeSlots = [
+                    '3:00 PM - 3:30 PM',
+                    '3:30 PM - 4:00 PM',
+                    '4:00 PM - 4:30 PM',
+                    '4:30 PM - 5:00 PM',
+                    '5:00 PM - 5:30 PM',
+                    '5:30 PM - 6:00 PM',
+                    '6:00 PM - 6:30 PM',
+                    '6:30 PM - 7:00 PM'
+                ];
+            }
+            
+            timeSlots.forEach(time => {
+                const timeOption = document.createElement('div');
+                timeOption.className = 'time-slot-option bg-broto-dark text-white p-3 rounded-lg border border-broto-grey text-center cursor-pointer';
+                timeOption.textContent = time;
+                timeOption.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    document.querySelectorAll('.time-slot-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    timeOption.classList.add('selected');
+                    
+                    // Store selected detailed time
+                    selectedDetailedTime = time;
+                    
+                    // Update the display
+                    const detailedTimeDisplay = document.getElementById('detailed-time-display');
+                    detailedTimeDisplay.textContent = time;
+                    
+                    // Close the modal after a short delay
+                    setTimeout(() => {
+                        toggleTimeSlotModal();
+                    }, 500);
+                });
+                
+                detailedTimeSlots.appendChild(timeOption);
+            });
+            
+            // Refresh Lucide icons to ensure the red stars appear
+            lucide.createIcons();
+        }
+
+        // --- Slideshow Logic for Gallery Section ---
+        let slideIndex = 0;
+        const totalSlidesGallery = 4;
+        
+        function showSlides() {
+            const slideElements = document.getElementById('slideshow-content')?.children;
+            if (!slideElements || slideElements.length !== totalSlidesGallery) return;
+
+            for (let i = 0; i < totalSlidesGallery; i++) {
+                slideElements[i].classList.remove('active');
+            }
+            
+            slideIndex++;
+            if (slideIndex > totalSlidesGallery) { slideIndex = 1 } 
+            
+            slideElements[slideIndex - 1].classList.add('active'); 
+            
+            const dots = document.getElementById('slideshow-dots')?.children;
+            if (dots) {
+                for (let i = 0; i < dots.length; i++) {
+                    dots[i].classList.remove('bg-broto-yellow');
+                    dots[i].classList.add('bg-broto-grey');
+                }
+                dots[slideIndex - 1].classList.add('bg-broto-yellow');
+                dots[slideIndex - 1].classList.remove('bg-broto-grey');
+            }
+
+            setTimeout(showSlides, 5000); 
+        }
+
+        function currentSlide(n) {
+            clearTimeout(); 
+            slideIndex = n;
+            const slideElements = document.getElementById('slideshow-content')?.children;
+            if (!slideElements) return;
+            
+            for (let i = 0; i < totalSlidesGallery; i++) {
+                slideElements[i].classList.remove('active');
+            }
+            slideElements[slideIndex - 1].classList.add('active');
+            
+            const dots = document.getElementById('slideshow-dots')?.children;
+            if (dots) {
+                for (let i = 0; i < dots.length; i++) {
+                    dots[i].classList.remove('bg-broto-yellow');
+                    dots[i].classList.add('bg-broto-grey');
+                }
+                dots[slideIndex - 1].classList.add('bg-broto-yellow');
+                dots[slideIndex - 1].classList.remove('bg-broto-grey');
+            }
+            
+            setTimeout(showSlides, 3000);
+        }
+        
+        // --- Logo Animation Logic ---
+        function triggerDissolve() {
+            const logo = document.getElementById('golden-hands-logo');
+            if (!logo) return;
+            
+            logo.classList.add('logo-dissolve-active');
+            
+            const particles = logo.querySelectorAll('.logo-particle');
+            particles.forEach(particle => {
+                const x = (Math.random() - 0.5) * 400 + 'px';
+                const y = (Math.random() - 0.5) * 400 + 'px';
+                const delay = Math.random() * 0.5 + 's'; 
+                
+                particle.style.setProperty('--x', x);
+                particle.style.setProperty('--y', y);
+                
+                particle.classList.remove('logo-dissolve');
+                void particle.offsetWidth;
+                particle.style.animationDelay = delay;
+                particle.classList.add('logo-dissolve');
+            });
+            
+            setTimeout(() => {
+                 logo.classList.remove('logo-dissolve-active');
+                 particles.forEach(p => {
+                     p.classList.remove('logo-dissolve');
+                     p.style.animationDelay = '0s';
+                     p.style.opacity = 1; 
+                     p.style.transform = 'translate(0, 0) scale(1)';
+                     p.style.filter = 'blur(0)';
+                 });
+             }, 1200); 
+        }
+        
+        function createLogoParticles() {
+            const logoContainer = document.getElementById('golden-hands-logo');
+            if (!logoContainer) return;
+            
+            const originalText = "GOLDEN HANDS";
+            logoContainer.innerHTML = '';
+            
+            for (let i = 0; i < originalText.length + 5; i++) {
+                const charIndex = i % originalText.length;
+                const char = originalText[charIndex];
+                
+                const particle = document.createElement('span');
+                particle.className = `logo-particle text-7xl font-extrabold tracking-widest absolute`;
+                
+                if (charIndex < 6) {
+                    particle.classList.add('logo-golden');
+                } else {
+                    particle.classList.add('logo-hands');
+                }
+
+                particle.textContent = char;
+                particle.style.left = `${(charIndex * 40) + (Math.random() * 5)}px`;
+                particle.style.top = `${Math.random() * 10}px`; 
+                particle.style.zIndex = 50 - i;
+                
+                logoContainer.appendChild(particle);
+            }
+        }
+
+        // --- Accordion Logic ---
+        function toggleAccordion(id) {
+            const content = document.getElementById(`accordion-content-${id}`);
+            const icon = document.getElementById(`accordion-icon-${id}`);
+            
+            if (!content || !icon) return;
+            
+            const isActive = content.classList.contains('active');
+            
+            document.querySelectorAll('.accordion-content').forEach(el => {
+                el.classList.remove('active');
+                el.style.maxHeight = '0';
+            });
+            document.querySelectorAll('.accordion-icon').forEach(el => {
+                el.classList.remove('rotate-180');
+            });
+
+            if (!isActive) {
+                content.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.classList.add('rotate-180');
+            } else {
+                content.style.maxHeight = '0';
+                icon.classList.remove('rotate-180');
+            }
+        }
+
+        // --- Form/Utility Handlers ---
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            if (!container) return;
+            
+            const messageElement = document.createElement('div');
+            messageElement.className = `p-3 mb-4 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'} shadow-xl`;
+            messageElement.textContent = message;
+            container.appendChild(messageElement);
+
+            setTimeout(() => {
+                messageElement.remove();
+            }, 5000);
+        }
+
+        function handleContactFormSubmit(event) {
+            event.preventDefault();
+            showMessage("Your message has been sent successfully! We will reach out to you soon.", 'success');
+            document.getElementById('contact-us-form').reset();
+        }
+        
+        function handleBookLessonSubmit(event) {
+            event.preventDefault();
+            if (!selectedTimeSlot || !selectedDetailedTime) {
+                showMessage("Please select a time slot and detailed time.", 'error');
+                return;
+            }
+            
+            showMessage("Your lesson request has been booked! Check your email for confirmation.", 'success');
+            document.getElementById('book-lesson-form').reset();
+            
+            // Reset time slot selections
+            selectedTimeSlot = null;
+            selectedDetailedTime = null;
+            document.getElementById('time-slot-display').textContent = 'Select Time Slot';
+            document.getElementById('detailed-time-display').textContent = 'Select Time';
+        }
+        
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const role = document.getElementById('login-role').value;
+            showMessage(`Welcome! You are attempting to log in as ${role}. (Mock Login Successful)`, 'success');
+            toggleLoginModal(false);
+            document.getElementById('login-form').reset();
+        }
+
+        window.onload = function() {
+            // Initialize forms
+            const contactForm = document.getElementById('contact-us-form');
+            const bookForm = document.getElementById('book-lesson-form');
+            const loginForm = document.getElementById('login-form');
+            
+            if (contactForm) contactForm.addEventListener('submit', handleContactFormSubmit);
+            if (bookForm) bookForm.addEventListener('submit', handleBookLessonSubmit);
+            if (loginForm) loginForm.addEventListener('submit', handleLoginSubmit);
+
+            // UI Toggles
+            const searchToggle = document.getElementById('search-toggle');
+            const loginToggle = document.getElementById('login-toggle');
+            const registerToggle = document.getElementById('register-toggle');
+            const modalClose = document.getElementById('modal-close');
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            
+            if (searchToggle) searchToggle.addEventListener('click', toggleSearch);
+            if (loginToggle) loginToggle.addEventListener('click', () => toggleLoginModal(true));
+            if (registerToggle) registerToggle.addEventListener('click', () => toggleLoginModal(true));
+            if (modalClose) modalClose.addEventListener('click', () => toggleLoginModal(false));
+            if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', () => toggleMobileMenu(true));
+            if (mobileMenuClose) mobileMenuClose.addEventListener('click', () => toggleMobileMenu(false));
+            
+            // Close modal if backdrop is clicked
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+                loginModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'login-modal') {
+                        toggleLoginModal(false);
+                    }
+                });
+            }
+
+            // Close time slot modal if backdrop is clicked
+            const timeSlotModal = document.getElementById('time-slot-modal');
+            if (timeSlotModal) {
+                timeSlotModal.addEventListener('click', (e) => {
+                    if (e.target.id === 'time-slot-modal') {
+                        toggleTimeSlotModal();
+                    }
+                });
+            }
+
+            lucide.createIcons();
+            showSlides();
+            
+            // Initialize logo animation
+            createLogoParticles();
+            setTimeout(triggerDissolve, 1000);
+            const goldenHandsLogo = document.getElementById('golden-hands-logo');
+            if (goldenHandsLogo) {
+                goldenHandsLogo.addEventListener('click', triggerDissolve);
+                goldenHandsLogo.addEventListener('touchstart', triggerDissolve);
+            }
+
+            // Initialize NEW particle animation
+            setTimeout(initParticleCanvas, 500);
+            
+            // Initialize hero slideshow
+            initHeroSlideshow();
+
+            // Initialize gallery slideshow
+            gallerySlides = document.querySelectorAll('.driving-slide');
+            galleryThumbnails = document.querySelectorAll('.thumbnail');
+            galleryProgressBar = document.querySelector('.progress-bar');
+            
+            if (gallerySlides.length > 0) {
+                showGallerySlide(0);
+                resetGalleryInterval();
+                updateGalleryProgressBar();
+            }
+            
+            const servicesScrolls = document.querySelectorAll('.services-scroll');
+            
+            servicesScrolls.forEach(scroll => {
+                const clone = scroll.cloneNode(true);
+                scroll.parentNode.appendChild(clone);
+                
+                const contentWidth = scroll.scrollWidth;
+                const containerWidth = scroll.parentNode.clientWidth;
+                const duration = (contentWidth / containerWidth) * 20;
+                
+                scroll.style.animationDuration = `${duration}s`;
+                clone.style.animationDuration = `${duration}s`;
+            });
+        };
+
+        // Event listeners for particle animation
+        window.addEventListener('resize', handleParticleResize);
+        document.addEventListener('mousemove', handleParticleMouseMove);
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('contact-us-form');
+        const inputs = form.querySelectorAll('.validation-input');
+        
+        // Validation functions
+        const validators = {
+            name: (value) => {
+                return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+            },
+            phone: (value) => {
+                return /^[6-9]\d{9}$/.test(value);
+            },
+            email: (value) => {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            },
+            location: (value) => {
+                return value.trim().length >= 2;
+            },
+            message: (value) => {
+                return value.trim().length >= 10;
+            }
+        };
+        
+        // Error messages
+        const errorMessages = {
+            name: 'Please enter a valid name (minimum 2 characters, letters only)',
+            phone: 'Please enter a valid 10-digit phone number starting with 6-9',
+            email: 'Please enter a valid email address',
+            location: 'Please enter your location (minimum 2 characters)',
+            message: 'Please enter a message with at least 10 characters'
+        };
+        
+        // Real-time validation for each input
+        inputs.forEach(input => {
+            const fieldName = input.name;
+            const messageElement = input.parentElement.querySelector('.validation-message');
+            
+            input.addEventListener('input', function() {
+                validateField(input, fieldName, messageElement);
+            });
+            
+            input.addEventListener('blur', function() {
+                validateField(input, fieldName, messageElement);
+            });
+        });
+        
+        // Phone number specific validation - only allow numbers
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            e.target.value = e.target.value.replace(/\D/g, '');
+            
+            // Limit to 10 digits
+            if (e.target.value.length > 10) {
+                e.target.value = e.target.value.slice(0, 10);
+            }
+            
+            const messageElement = phoneInput.parentElement.querySelector('.validation-message');
+            validateField(phoneInput, 'phone', messageElement);
+        });
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true;
+            const firstInvalidField = [];
+            
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                if (!validateField(input, fieldName, messageElement)) {
+                    isValid = false;
+                    if (firstInvalidField.length === 0) {
+                        firstInvalidField.push(input);
+                    }
+                }
+            });
+            
+            if (isValid) {
+                // Show success message
+                showMessage('Thank you for your message! We will contact you soon.', 'success');
+                form.reset();
+                
+                // Reset all validation states
+                inputs.forEach(input => {
+                    input.classList.remove('success', 'error');
+                    const messageElement = input.parentElement.querySelector('.validation-message');
+                    messageElement.classList.add('hidden');
+                });
+            } else {
+                // Focus on first invalid field
+                if (firstInvalidField.length > 0) {
+                    firstInvalidField[0].focus();
+                }
+                showMessage('Please fix the errors in the form before submitting.', 'error');
+            }
+        });
+        
+        function validateField(input, fieldName, messageElement) {
+            const value = input.value.trim();
+            const isValid = validators[fieldName](value);
+            
+            if (value === '') {
+                input.classList.remove('success', 'error');
+                messageElement.classList.add('hidden');
+                return false;
+            }
+            
+            if (isValid) {
+                input.classList.remove('error');
+                input.classList.add('success');
+                messageElement.classList.add('hidden');
+                return true;
+            } else {
+                input.classList.remove('success');
+                input.classList.add('error');
+                messageElement.querySelector('span').textContent = errorMessages[fieldName];
+                messageElement.classList.remove('hidden');
+                return false;
+            }
+        }
+        
+        function showMessage(message, type) {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `form-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+    });
+
+    </script>
+</head>
+
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Login/Register Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-broto-black/80 z-[100] flex items-center justify-center p-4">
+        <div class="bg-broto-dark p-8 rounded-xl w-full max-w-md shadow-2xl relative">
+            <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-broto-yellow transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="text-3xl font-extrabold text-broto-yellow mb-6 text-center">Login / Register</h3>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                    <input type="email" id="login-email" placeholder="Your Email" required
+                        class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <input type="password" id="login-password" placeholder="Password" required
+                        class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                </div>
+                <div>
+                    <label for="login-role" class="block text-sm font-medium text-gray-300 mb-1">I am a...</label>
+                    <select id="login-role" required
+                        class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <option value="user">Student</option>
+                        <option value="employee">Instructor</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit"
+                    class="w-full bg-broto-yellow text-broto-black font-bold text-lg px-6 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 shadow-lg">
+                    Login
+                </button>
+            </form>
+            <p class="text-center text-sm text-gray-400 mt-4">Don't have an account? <a href="#" class="text-broto-yellow hover:underline">Register Now</a></p>
+        </div>
+    </div>
+
+    <!-- Time Slot Selection Modal -->
+    <div id="time-slot-modal" class="time-slot-modal fixed inset-0 bg-broto-black/80 z-[100] flex items-center justify-center p-4">
+        <div class="bg-broto-dark p-6 rounded-xl w-full max-w-md shadow-2xl relative">
+            <button onclick="toggleTimeSlotModal()" class="absolute top-4 right-4 text-gray-400 hover:text-broto-yellow transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <h3 class="text-2xl font-extrabold text-broto-yellow mb-4 text-center">Select Time Slot</h3>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-3">
+                    <div class="time-slot-option bg-broto-black text-white p-4 rounded-lg border border-broto-grey text-center cursor-pointer" 
+                         onclick="selectTimeSlot('Morning (6AM - 11AM)')">
+                        Morning (6AM - 11AM)
+                    </div>
+                    <div class="time-slot-option bg-broto-black text-white p-4 rounded-lg border border-broto-grey text-center cursor-pointer" 
+                         onclick="selectTimeSlot('Afternoon (3PM - 7PM)')">
+                        Afternoon (3PM - 7PM)
+                    </div>
+                </div>
+                
+                <!-- Detailed Time Container -->
+                <div id="detailed-time-container" class="hidden-stage">
+                    <h4 id="detailed-slot-title" class="text-lg font-bold text-white mb-4 text-center"></h4>
+                    
+                    <!-- Top text with red star icon -->
+                    <div class="flex items-center justify-center mb-4">
+                        <i data-lucide="star" class="w-4 h-4 text-red-500 mr-2"></i>
+                        <p class="text-center text-sm text-gray-400">All slots are 30 minutes and subject to availability.</p>
+                    </div>
+                    
+                    <div id="detailed-time-slots" class="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto p-2">
+                        <!-- Detailed time slots will be populated here -->
+                    </div>
+                    
+                    <!-- Bottom text with red star icon -->
+                    <div class="flex items-center justify-center mt-6">
+                        <i data-lucide="star" class="w-4 h-4 text-red-500 mr-2"></i>
+                        <p class="text-center text-sm text-gray-400">All slots are 30 minutes and subject to availability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Container (for form submissions, replacing alert) -->
+    <div id="message-container" class="fixed top-4 right-4 z-50 w-full max-w-xs"></div>
+
+    <!-- Top Contact Bar & Search Panel -->
+    <div class="bg-broto-black text-white text-sm py-2 border-b border-broto-grey hidden md:block">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex space-x-6">
+                <a href="tel:+9040040265" class="flex items-center hover:text-broto-yellow transition duration-300">
+                    <i data-lucide="phone" class="w-4 h-4 mr-2"></i> +91 9040040165
+                </a>
+                <a href="mailto:goldenhandsdrivingschool@gmail.com" class="flex items-center hover:text-broto-yellow transition duration-300">
+                    <i data-lucide="mail" class="w-4 h-4 mr-2"></i> goldenhandsdrivingschool@gmail.com
+                </a>
+            </div>
+            <div class="flex space-x-4 items-center">
+                <i data-lucide="search" id="search-toggle" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
+                <i data-lucide="user" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
+                <button id="register-toggle" class="bg-broto-yellow text-broto-black text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-yellow-400 transition duration-300">
+                    Register
+                </button>
+                <button id="login-toggle" class="border border-broto-yellow text-broto-yellow text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-broto-yellow hover:text-broto-black transition duration-300">
+                    Login
+                </button>
+                <a href="#book-lesson" class="bg-broto-yellow text-broto-black text-xs font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
+                    Book Lesson
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Panel (Hidden by default) -->
+    <div id="search-panel" class="hidden bg-broto-dark border-b border-broto-yellow py-3 z-30">
+        <div class="max-w-7xl mx-auto px-4 flex">
+            <input type="text" id="search-input" placeholder="Search courses, locations, or instructors..."
+                   class="w-full bg-broto-black text-white p-2 rounded-lg border border-broto-grey focus:ring-broto-yellow focus:border-broto-yellow">
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Mobile Menu Button (Left on mobile) -->
+                <button type="button" id="mobile-menu-toggle" class="inline-flex items-center justify-center p-2 rounded-md text-broto-yellow lg:hidden order-1" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+
+              <!-- Logo and Brand Name -->
+                <div class="flex items-center order-2 lg:order-none">
+                <!-- Logo -->
+                    <img src="logo.png" alt="Golden Hands Logo" class="w-12 h-12 mr-3">
+                <!-- Brand Name -->
+                    <a href="index.html" class="text-2xl font-extrabold tracking-widest">
+                        <span class="text-white">GOLDEN</span>
+                        <span class="text-broto-yellow">HANDS</span>
+                     </a>
+                </div>
+                
+                <!-- Desktop Menu Items -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium order-3">
+                    <a href="#" class="hover:text-broto-yellow transition duration-300">Home</a>
+                    
+                    <!-- Services Dropdown -->
+                    <div class="relative group">
+                        <button onclick="toggleDropdown()" class="flex items-center hover:text-broto-yellow transition duration-300">
+                            Services <i data-lucide="chevron-down" class="w-4 h-4 ml-1 transition-transform duration-300"></i>
+                        </button>
+                        <div id="services-dropdown" class="dropdown-menu absolute left-0 mt-4 w-64 bg-broto-grey rounded-lg shadow-xl z-50">
+                            <div class="py-2">
+                                <a href="pages/driving-training.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Training</a>
+                                <a href="pages/driving-license.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Licence</a>
+                                <a href="pages/car-buying-consultant.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Car Buying Consultant</a>
+                                <a href="pages/pdi.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Pre-Delivery Inspection (PDI)</a>
+                                <a href="pages/rto-servic.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">RTO Service</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="about.html" class="hover:text-broto-yellow transition duration-300">About</a>
+                    <a href="gallery.html" class="hover:text-broto-yellow transition duration-300">Gallery</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Contact</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Location</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Drawer (Right Side) -->
+    <div id="mobile-menu-drawer" class="fixed top-0 right-0 w-64 h-full bg-broto-dark p-6 z-50 shadow-2xl lg:hidden">
+        <div class="flex justify-end mb-8">
+            <button id="mobile-menu-close" class="text-broto-yellow hover:text-white">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+        </div>
+        <div class="space-y-4 text-lg font-medium">
+            <a href="#" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Home</a>
+            
+            <!-- Services Dropdown for Mobile -->
+            <div class="relative">
+                <button onclick="toggleMobileServices()" class="flex items-center justify-between w-full hover:text-broto-yellow transition duration-300">
+                    <span>Services</span>
+                    <i data-lucide="chevron-down" id="mobile-services-arrow" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div id="mobile-services-dropdown" class="dropdown-menu pl-4 mt-2 space-y-3">
+                    <a href="pages/driving-training.html" class="block text-broto-yellow hover:text-white transition duration-300" onclick="toggleMobileMenu(false)">Driving Training</a>
+                    <a href="pages/driving-license.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Driving Licence</a>
+                    <a href="pages/car-buying.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Car Buying Consultant</a>
+                    <a href="pages/pdi-service.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Pre-Delivery Inspection (PDI)</a>
+                    <a href="pages/rto-services.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">RTO Service</a>
+                </div>
+            </div>
+            
+            <a href="about.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">About</a>
+            <a href="gallery.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Gallery</a>
+            <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Contact</a>
+            <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Location</a>
+            <div class="pt-4 border-t border-broto-grey space-y-2">
+                <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleLoginModal(true); toggleMobileMenu(false);">Login / Register</button>
+                <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleSearch(); toggleMobileMenu(false);">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIXED Hero Section: Slideshow with Proper Sizing and Touch Controls -->
+    <section class="h-[70vh] relative overflow-hidden bg-broto-black">
+        <div class="hero-slides-container" id="hero-slides-container">
+            <div class="hero-slides-wrapper" id="hero-slides-wrapper">
+                <!-- Slide 1 -->
+                <div class="hero-slide" style="background-image: url('https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+                    <div class="hero-overlay">
+                        <h1 class="text-white text-4xl md:text-5xl font-black text-center">Master the Road</h1>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="hero-slide" style="background-image: url('https://images.pexels.com/photos/707046/pexels-photo-707046.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+                     <div class="hero-overlay">
+                        <h1 class="text-white text-4xl md:text-5xl font-black text-center">Experienced & Patient</h1>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="hero-slide" style="background-image: url('https://images.pexels.com/photos/810357/pexels-photo-810357.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+                     <div class="hero-overlay">
+                        <h1 class="text-white text-4xl md:text-5xl font-black text-center">Learn in Comfort</h1>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="hero-slide" style="background-image: url('https://images.pexels.com/photos/119435/pexels-photo-119435.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+                     <div class="hero-overlay">
+                        <h1 class="text-white text-4xl md:text-5xl font-black text-center">Hassle-Free Licensing</h1>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Touch/Swipe Area -->
+            <div class="touch-area" id="hero-touch-area"></div>
+            
+            <!-- Slide Indicators -->
+            <div class="slide-indicators">
+                <div class="slide-indicator active" data-index="0"></div>
+                <div class="slide-indicator" data-index="1"></div>
+                <div class="slide-indicator" data-index="2"></div>
+                <div class="slide-indicator" data-index="3"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW CANVAS PARTICLE ANIMATION SECTION (Image-based) -->
+    <section class="particle-section py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center">
+            <!-- Left side: Text content -->
+            <div class="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
+                <p class="text-white text-lg sm:text-xl mb-4 uppercase tracking-widest font-light">Start Your Journey</p>
+                <h1 class="text-6xl sm:text-7xl font-black leading-tight mb-6">
+                    <span class="text-broto-yellow">YOUR ROAD</span> <br>
+                    TO INDEPENDENCE
+                </h1>
+                <p class="text-xl sm:text-2xl text-white font-medium mb-10 tracking-wider">
+                    EXPERT DRIVING TRAINING <br class="hidden sm:block"> FOR EVERY SKILL LEVEL
+                </p>
+                <a href="#service-section" class="inline-block bg-broto-black text-broto-yellow border-2 border-broto-yellow text-lg font-bold px-10 py-4 rounded-xl shadow-2xl hover:bg-broto-yellow hover:text-broto-black transition duration-300 transform hover:scale-105">
+                    Explore Our Services
+                </a>
+            </div>
+            
+            <!-- Right side: Logo animation -->
+            <div class="lg:w-1/2 flex justify-center">
+                <canvas id="particleCanvas" class="particle-canvas"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW GALLERY SECTION (Replaces the old "YOUR ROAD TO INDEPENDENCE" section) -->
+    <section class="py-8 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-extrabold mb-2">
+                    Our <span class="text-broto-yellow">Photo Gallery</span>
+                </h2>
+                <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+                    Explore our training programs and services through our photo gallery.
+                </p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gallery-container">
+                <!-- Driving Training Section - Redesigned -->
+                <div class="lg:w-1/2 driving-gallery-container">
+                    <h2 class="text-lg font-bold mb-3 text-center text-broto-yellow">Driving Training</h2>
+                    <div class="driving-gallery">
+                        <!-- Progress Bar -->
+                        <div class="progress-bar"></div>
+                        
+                        <!-- Slide 1 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Professional Driving Instruction</p>
+                                    <p class="text-xs text-gray-300">Learn from experienced trainers with years of expertise</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 2 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1603712610494-7ce56b292826?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Road Safety Techniques</p>
+                                    <p class="text-xs text-gray-300">Master defensive driving in various conditions</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 3 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Vehicle Control Exercises</p>
+                                    <p class="text-xs text-gray-300">Practice in controlled environments with modern vehicles</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 4 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Practical Road Lessons</p>
+                                    <p class="text-xs text-gray-300">Real-world driving experience with personalized feedback</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 5 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Advanced Driving Skills</p>
+                                    <p class="text-xs text-gray-300">Learn advanced techniques for challenging road conditions</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Buttons -->
+                        <button class="nav-btn absolute left-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center" onclick="prevGallerySlide(); resetGalleryInterval();" aria-label="Previous slide">
+                            <i data-lucide="chevron-left" class="w-5 h-5 text-broto-yellow"></i>
+                        </button>
+                        <button class="nav-btn absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center" onclick="nextGallerySlide(); resetGalleryInterval();" aria-label="Next slide">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-broto-yellow"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Thumbnail Navigation -->
+                    <div class="thumbnail-container">
+                        <div class="thumbnail active" onclick="goToGallerySlide(0)">
+                            <img src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Professional Driving Instruction" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToGallerySlide(1)">
+                            <img src="https://images.unsplash.com/photo-1603712610494-7ce56b292826?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Road Safety Techniques" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToGallerySlide(2)">
+                            <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Vehicle Control Exercises" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToGallerySlide(3)">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Practical Road Lessons" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToGallerySlide(4)">
+                            <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Advanced Driving Skills" class="thumbnail-img">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Services Section -->
+                <div class="lg:w-1/2 flex flex-col gap-3">
+                    <!-- RTO Gallery -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">RTO Services</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Vehicle registration</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">License assistance</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba53377fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Document verification</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Permit processing</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- PDI Gallery -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">PDI Services</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Pre-delivery inspection</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Quality check</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Testing</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba53377fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Final prep</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Car Consultant -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">Car Consultant</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Consultation</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Recommendations</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Market analysis</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Guidance</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- 1.5. WHAT WE DO Section (Services) -->
+    <section id="service-section" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-4 tracking-wider">WHAT WE DO</h2>
+            <p class="text-gray-400 text-sm mb-12 border-b border-broto-grey pb-4">
+                At Golden Hand's, we provide comprehensive training programs designed to transform beginners into confident, responsible drivers. Our services extend beyond just lessons; we offer full RTO assistance, vehicle consulting, and advanced defensive driving training, ensuring you are prepared for every aspect of vehicle ownership.
+            </p>
+   
+            <h3 class="text-3xl font-extrabold text-white mb-8 tracking-wider">
+                CHOOSE FROM A RANGE OF <span class="text-broto-yellow">PREMIUM SERVICES</span>
+            </h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <!-- Service Card 1: Driving Training -->
+                <a href="pages/driving-training.html" class="bg-broto-black rounded-xl overflow-hidden shadow-xl hover:shadow-broto-yellow/30 transition duration-300 group md:col-span-1 col-span-2 flex justify-center block">
+                    <div class="w-full max-w-[200px]">
+                        <img src="1000058876.jpg" alt="Driving Training" class="w-full h-40 object-cover">
+                        <div class="p-4 flex justify-between items-center">
+                            <p class="text-sm font-semibold text-white">Driving Training</p>
+                            <i data-lucide="arrow-right" class="w-5 h-5 text-broto-yellow group-hover:translate-x-1 transition duration-200"></i>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Service Card 2: Driving Licence -->
+                <a href="pages/driving-license.html" class="bg-broto-black rounded-xl overflow-hidden shadow-xl hover:shadow-broto-yellow/30 transition duration-300 group block">
+                    <img src="https://placehold.co/300x400/222222/ffffff?text=Driving+Licence" alt="Driving Licence" class="w-full h-40 object-cover">
+                    <div class="p-4 flex justify-between items-center">
+                        <p class="text-sm font-semibold text-white">Driving Licence</p>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-broto-yellow group-hover:translate-x-1 transition duration-200"></i>
+                    </div>
+                </a>
+                
+                <!-- Service Card 3: Car Buying Consultant -->
+                <a href="pages/car-buying.html" class="bg-broto-black rounded-xl overflow-hidden shadow-xl hover:shadow-broto-yellow/30 transition duration-300 group block">
+                    <img src="https://placehold.co/300x400/222222/ffffff?text=Car+Buying+Consultant" alt="Car Buying Consultant" class="w-full h-40 object-cover">
+                    <div class="p-4 flex justify-between items-center">
+                        <p class="text-sm font-semibold text-white">Car Buying Consultant</p>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-broto-yellow group-hover:translate-x-1 transition duration-200"></i>
+                    </div>
+                </a>
+            
+                <!-- Service Card 4: PDI Service -->
+                <a href="pages/pdi-service.html" class="bg-broto-black rounded-xl overflow-hidden shadow-xl hover:shadow-broto-yellow/30 transition duration-300 group block">
+                    <img src="https://placehold.co/300x400/222222/ffffff?text=PDI+Service" alt="PDI Service" class="w-full h-40 object-cover">
+                    <div class="p-4 flex justify-between items-center">
+                        <p class="text-sm font-semibold text-white">Pre-Delivery Inspection</p>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-broto-yellow group-hover:translate-x-1 transition duration-200"></i>
+                    </div>
+                </a>
+            
+                <!-- Service Card 5: RTO Service -->
+                <a href="pages/rto-services.html" class="bg-broto-black rounded-xl overflow-hidden shadow-xl hover:shadow-broto-yellow/30 transition duration-300 group block">
+                    <img src="https://placehold.co/300x400/222222/ffffff?text=RTO+Service" alt="RTO Service" class="w-full h-40 object-cover">
+                    <div class="p-4 flex justify-between items-center">
+                        <p class="text-sm font-semibold text-white">RTO Service</p>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-broto-yellow group-hover:translate-x-1 transition duration-200"></i>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 1.6. Fees Section (New) -->
+    <section id="fees-section" class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8 tracking-wider text-center">
+                CHOOSE YOUR <span class="text-broto-yellow">DRIVING PACKAGE</span>
+            </h2>
+
+            <div class="overflow-x-auto rounded-xl shadow-2xl">
+                <table class="w-full min-w-max border-collapse">
+                    <thead class="bg-broto-yellow text-broto-black uppercase text-sm">
+                        <tr>
+                            <th class="p-4 text-left font-black">Packages</th>
+                            <th class="p-4 text-center font-black">Package 1</th>
+                            <th class="p-4 text-center font-black">Package 2</th>
+                            <th class="p-4 text-center font-black">Package 3</th>
+                            <th class="p-4 text-center font-black">Package 4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Price Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Price (INR)</td>
+                            <td class="p-4 text-center">₹3000</td>
+                            <td class="p-4 text-center">₹3500</td>
+                            <td class="p-4 text-center">₹4500</td>
+                            <td class="p-4 text-center">₹5000</td>
+                        </tr>
+                        <!-- Practical Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Practical Lessons (Hrs)</td>
+                            <td class="p-4 text-center">10</td>
+                            <td class="p-4 text-center">15</td>
+                           
+                            <td class="p-4 text-center">20</td>
+                            <td class="p-4 text-center">24</td>
+                        </tr>
+                        <!-- Theory Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Theory Classes (Clases)</td>
+                            <td class="p-4 text-center">3</td>
+                            <td class="p-4 text-center">5</td>
+                          
+                            <td class="p-4 text-center">7</td>
+                            <td class="p-4 text-center">10</td>
+                        </tr>
+                        <!-- Home Pickup & Drop Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Home Pickup & Drop</td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                           
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                        </tr>
+                        <!-- Vehicle Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Vehicle</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                           
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                        </tr>
+                        <!-- Trail Driving Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Trail Driving (Days)</td>
+                            <td class="p-4 text-center">1</td>
+                            <td class="p-4 text-center">2</td>
+                           
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                        </tr>
+                        <!-- Training Time Row -->
+                        <tr class="bg-broto-dark text-white">
+                            <td class="p-4 font-bold text-broto-yellow">Training Time</td>
+                            <td class="p-4 text-center text-xs">8AM - 10AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                           
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                            <td class="p-4 text-center text-xs">6AM - 11AM<br>3PM - 7PM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-8">
+                <a href="#book-lesson-form-section" class="inline-block bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300">
+                    Book Your Package
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1.7. Get To Know Us (About Us Small) -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <!-- Left Content -->
+                <div>
+                    <h2 class="text-4xl font-extrabold text-white mb-4 tracking-wider">
+                        <span class="text-broto-yellow">Ready to</span> Learn Driving?
+                    </h2>
+                    <p class="text-gray-300 text-lg mb-6">
+                        Welcome to SysDriving, where safe, confident driving is our mission. Our certified instructors and modern training vehicles ensure you get the best start on the road. We tailor every lesson to your pace, guaranteeing you pass your test and drive independently.
+                    </p>
+                    <a href="about.html" class="inline-block bg-broto-yellow text-broto-black font-bold text-md px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300">
+                        Discover More About Us
+                    </a>
+                </div>
+                <!-- Right Image -->
+                <div class="rounded-xl overflow-hidden shadow-2xl">
+                    <img src="background.jpg" alt="Driving Lesson Photo" class="w-full h-auto object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 1.8. Trainers Section (New Design) -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-extrabold text-white mb-12 tracking-wider text-center">
+                MEET OUR <span class="text-broto-yellow">PROFESSIONAL</span> AND EXPERIENCED INSTRUCTORS
+            </h1>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Trainer 1 -->
+                <div class="team-card">
+                    <div class="card-content">
+                        <div class="profile-image">
+                            <!-- Placeholder image, using generic people photos -->
+                            <img src="https://www.dreamdrivingschool.in/assets/images/team/team-1-1.jpg" alt="Amit Swain">
+                        </div>
+                        <h3 class="member-name text-center">Amit Swain</h3>
+                        <p class="member-role text-center">SENIOR INSTRUCTOR</p>
+                        <div class="social-links">
+                            <a href="#" class="social-icon">
+                                <i data-lucide="twitter" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="facebook" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="instagram" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                        <p class="member-bio text-center">
+                            Committed, patient, and focused on building road confidence from day one.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Trainer 2 -->
+                <div class="team-card">
+                    <div class="card-content">
+                        <div class="profile-image">
+                            <img src="https://images.unsplash.com/photo-1604004555489-723a93d6ce74?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Anjali Varma">
+                        </div>
+                        <h3 class="member-name text-center">Anjali Varma</h3>
+                        <p class="member-role text-center">LEAD TRAINER</p>
+                        <div class="social-links">
+                            <a href="#" class="social-icon">
+                                <i data-lucide="twitter" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="facebook" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="instagram" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                        <p class="member-bio text-center">
+                            Specializes in nervous learners and defensive driving techniques.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Trainer 3 -->
+                <div class="team-card">
+                    <div class="card-content">
+                        <div class="profile-image">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop" alt="Prakash Singh">
+                        </div>
+                        <h3 class="member-name text-center">Prakash Singh</h3>
+                        <p class="member-role text-center">RTO EXPERT</p>
+                        <div class="social-links">
+                            <a href="#" class="social-icon">
+                                <i data-lucide="twitter" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="facebook" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="instagram" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                        <p class="member-bio text-center">
+                            Our RTO expert, ensuring every student is test-ready and compliant.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Trainer 4 -->
+                <div class="team-card">
+                    <div class="card-content">
+                        <div class="profile-image">
+                            <img src="https://cdn-9.motorsport.com/images/mgl/2y3j5bg6/s800/lewis-hamilton-ferrari.jpg" alt="Lewis Hamilton">
+                        </div>
+                        <h3 class="member-name text-center">Lewis Hamilton </h3>
+                        <p class="member-role text-center">EXPERT DRIVER</p>
+                        <div class="social-links">
+                            <a href="#" class="social-icon">
+                                <i data-lucide="twitter" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="facebook" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="linkedin" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#" class="social-icon">
+                                <i data-lucide="instagram" class="w-5 h-5"></i>
+                            </a>
+                        </div>
+                        <p class="member-bio text-center">
+                            Excels at parallel parking and highway driving safety.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Customer Review Section (Auto-scrolled, Slower) -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-broto-yellow text-center mb-6 uppercase tracking-wider">
+                Student Testimonials
+            </h2>
+        </div>
+        
+        <!-- Scrolling Wrapper -->
+        <div class="scrolling-wrapper">
+            <div class="scrolling-track" id="review-track">
+                <!-- Reviews Content (Repeated Twice for seamless loop) -->
+                <div class="flex">
+                    <!-- Review Card 1 -->
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">
+                            Thanks SysDriving! I passed my driving test on the first attempt thanks to the patient instructors and excellent practical lessons. Highly recommend Package 4!
+                        </p>
+                        <p class="font-bold text-lg text-broto-yellow">Priya K.</p>
+                        <p class="text-xs text-gray-500">Passed License Test</p>
+                    </div>
+
+                    <!-- Review Card 2 -->
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">
+                            The home pickup service was a lifesaver. My instructor, Ravi, was extremely calm and taught me to drive in city traffic with confidence. Worth every rupee!
+                        </p>
+                        <p class="font-bold text-lg text-broto-yellow">Sameer A.</p>
+                        <p class="text-xs text-gray-500">Advanced City Driving</p>
+                    </div>
+
+                    <!-- Review Card 3 -->
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">
+                            The theory classes were concise and super helpful for the RTO exam. I also used their RTO service for the application, making the whole process hassle-free.
+                        </p>
+                        <p class="font-bold text-lg text-broto-yellow">Zoya F.</p>
+                        <p class="text-xs text-gray-500">RTO Service & Theory</p>
+                    </div>
+
+                    <!-- Review Card 4 -->
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4">
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                            <i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">
+                            I took the Car Buying Consultant package and they helped me select the perfect used car for my budget. Fantastic non-driving services too!
+                        </p>
+                        <p class="font-bold text-lg text-broto-yellow">Umesh Karnal</p>
+                        <p class="text-xs text-gray-500">Consultant Client</p>
+                    </div>
+                </div>
+
+                 <!-- Duplicated Content for Loop -->
+                <div class="flex" aria-hidden="true">
+                    <!-- Duplicates of the above cards for seamless scrolling -->
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4"><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i></div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">Thanks SysDriving! I passed my driving test on the first attempt thanks to the patient instructors and excellent practical lessons. Highly recommend Package 4!</p>
+                        <p class="font-bold text-lg text-broto-yellow">Priya K.</p><p class="text-xs text-gray-500">Passed License Test</p>
+                    </div>
+
+                    <div class="scroll-item-review bg-broto-black p-6 rounded-xl border-t-4 border-broto-yellow shadow-xl cursor-pointer">
+                        <div class="flex text-broto-yellow mb-4"><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i><i data-lucide="star" class="w-5 h-5 fill-broto-yellow stroke-broto-yellow"></i></div>
+                        <p class="text-gray-300 text-sm mb-4 line-clamp-4">The home pickup service was a lifesaver. My instructor, Ravi, was extremely calm and taught me to drive in city traffic with confidence. Worth every rupee!</p>
+                        <p class="font-bold text-lg text-broto-yellow">Sameer A.</p><p class="text-xs text-gray-500">Advanced City Driving</p>
+                    </div>
+                </div>
+                <!-- End Duplicated Content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Slideshow Gallery Section -->
+    <section id="gallery-section" class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8 tracking-wider">
+                OUR GALLERY
+            </h2>
+            
+            <div class="slideshow-container relative mx-auto rounded-xl shadow-2xl" style="height: 400px;">
+                <div id="slideshow-content" class="h-full">
+                    <!-- Slide 1 -->
+                    <div class="slide active">
+                        <img src="car-pc-desktop-4k.jpg" alt="Gallery Image 1" class="w-full h-full object-cover rounded-xl">
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <img src="https://placehold.co/800x400/444444/ffffff?text=Gallery+Image+2+(Parking+Practice)" alt="Gallery Image 2" class="w-full h-full object-cover rounded-xl">
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <img src="https://placehold.co/800x400/555555/ffffff?text=Gallery+Image+3+(Theory+Class)" alt="Gallery Image 3" class="w-full h-full object-cover rounded-xl">
+                    </div>
+                    <!-- Slide 4 -->
+                    <div class="slide">
+                        <img src="https://placehold.co/800x400/666666/ffffff?text=Gallery+Image+4+(RTO+Mock+Test)" alt="Gallery Image 4" class="w-full h-full object-cover rounded-xl">
+                    </div>
+                </div>
+
+                <!-- Navigation Dots -->
+                <div id="slideshow-dots" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    <span class="w-3 h-3 rounded-full cursor-pointer transition duration-300 bg-broto-yellow" onclick="currentSlide(1)"></span>
+                    <span class="w-3 h-3 rounded-full cursor-pointer transition duration-300 bg-broto-grey" onclick="currentSlide(2)"></span>
+                    <span class="w-3 h-3 rounded-full cursor-pointer transition duration-300 bg-broto-grey" onclick="currentSlide(3)"></span>
+                    <span class="w-3 h-3 rounded-full cursor-pointer transition duration-300 bg-broto-grey" onclick="currentSlide(4)"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3.5. Social Media Section -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-broto-yellow text-center mb-12 uppercase tracking-wider">
+                Follow Our Progress
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Instagram Feed Mockup -->
+                <div class="bg-broto-black p-6 rounded-xl shadow-2xl">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="instagram" class="w-8 h-8 text-pink-500 mr-3"></i>
+                        <h3 class="text-xl font-bold text-white">Latest from Instagram</h3>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <img src="https://placehold.co/200x200/444444/ffffff?text=Insta+Post+1" alt="Instagram Post 1" class="w-full h-auto object-cover rounded-lg">
+                        <img src="https://placehold.co/200x200/444444/ffffff?text=Insta+Post+2" alt="Instagram Post 2" class="w-full h-auto object-cover rounded-lg">
+                        <img src="https://placehold.co/200x200/444444/ffffff?text=Insta+Post+3" alt="Instagram Post 3" class="w-full h-auto object-cover rounded-lg">
+                    </div>
+                    <p class="text-center mt-6 text-sm">Posts are typically fetched here automatically via API.</p>
+                </div>
+                
+                <!-- YouTube Section Mockup -->
+                <div class="bg-broto-black p-6 rounded-xl shadow-2xl">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="youtube" class="w-8 h-8 text-red-600 mr-3"></i>
+                        <h3 class="text-xl font-bold text-white">Featured YouTube Video</h3>
+                    </div>
+                    <a href="https://youtu.be/XZhXFbFCOu4" target="_blank" class="block">
+                        <div class="aspect-video bg-broto-dark rounded-lg flex items-center justify-center">
+                            <i data-lucide="play-circle" class="w-16 h-16 text-red-600 opacity-80"></i>
+                            <span class="absolute text-white text-lg font-bold">Race Highlights | 2025 Singapore Grand Prix</span>
+                        </div>
+                    </a>
+                    <p class="text-center mt-4 text-sm">Subscribe to our channel for weekly videos!</p>
+                </div>
+    </section>
+
+    <!-- 4. Q&A Section (New) -->
+    <section id="faq-section" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-4 tracking-wider text-center">
+                Have Questions in Your Mind? <span class="text-broto-yellow">Get the Answers Now</span>
+            </h2>
+
+            <div class="max-w-3xl mx-auto mt-12 space-y-4">
+                <!-- Question 1 -->
+                <div class="bg-broto-black rounded-xl shadow-lg border border-broto-grey">
+                    <button class="flex justify-between items-center w-full p-5 font-semibold text-left text-white hover:text-broto-yellow transition duration-200" onclick="toggleAccordion(1)">
+                        What sets SysDriving School apart from other driving schools in Bhubaneswar?
+                        <i id="accordion-icon-1" data-lucide="chevron-down" class="accordion-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="accordion-content-1" class="accordion-content text-gray-300 px-5 pb-5">
+                        <p>We focus on customized learning, offer door-step pick-up, provide modern, dual-control vehicles, and give comprehensive RTO assistance, making us a one-stop solution for new drivers in Bhubaneswar.</p>
+                    </div>
+                </div>
+                <!-- Question 2 -->
+                <div class="bg-broto-black rounded-xl shadow-lg border border-broto-grey">
+                    <button class="flex justify-between items-center w-full p-5 font-semibold text-left text-white hover:text-broto-yellow transition duration-200" onclick="toggleAccordion(2)">
+                        How experienced are your driving instructors?
+                        <i id="accordion-icon-2" data-lucide="chevron-down" class="accordion-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="accordion-content-2" class="accordion-content text-gray-300 px-5 pb-5">
+                        <p>Our team consists of certified instructors, each with a minimum of 7 years of professional experience, ensuring you receive the highest standard of safe and patient instruction.</p>
+                    </div>
+                </div>
+                <!-- Question 3 -->
+                <div class="bg-broto-black rounded-xl shadow-lg border border-broto-grey">
+                    <button class="flex justify-between items-center w-full p-5 font-semibold text-left text-white hover:text-broto-yellow transition duration-200" onclick="toggleAccordion(3)">
+                        What types of driving courses do you offer?
+                        <i id="accordion-icon-3" data-lucide="chevron-down" class="accordion-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="accordion-content-3" class="accordion-content text-gray-300 px-5 pb-5">
+                        <p>We offer Basic Beginner courses, Refresher courses for licensed drivers, Advanced City driving, and specialized programs like car buying consultation and full RTO documentation services.</p>
+                    </div>
+                </div>
+                <!-- Question 4 -->
+                <div class="bg-broto-black rounded-xl shadow-lg border border-broto-grey">
+                    <button class="flex justify-between items-center w-full p-5 font-semibold text-left text-white hover:text-broto-yellow transition duration-200" onclick="toggleAccordion(4)">
+                        Can I choose the schedule for my driving lessons?
+                        <i id="accordion-icon-4" data-lucide="chevron-down" class="accordion-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="accordion-content-4" class="accordion-content text-gray-300 px-5 pb-5">
+                        <p>Yes, we offer flexible training slots, including early mornings and evenings, as detailed in our fees section. You can coordinate directly with your instructor to find a time that fits your life.</p>
+                    </div>
+                </div>
+                 <!-- Question 5 -->
+                <div class="bg-broto-black rounded-xl shadow-lg border border-broto-grey">
+                    <button class="flex justify-between items-center w-full p-5 font-semibold text-left text-white hover:text-broto-yellow transition duration-200" onclick="toggleAccordion(5)">
+                        Do you provide training vehicles for practice sessions?
+                        <i id="accordion-icon-5" data-lucide="chevron-down" class="accordion-icon w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div id="accordion-content-5" class="accordion-content text-gray-300 px-5 pb-5">
+                        <p>Absolutely. All practical training is conducted in our modern, well-maintained vehicles (WagonR, Altroz) equipped with dual controls for your maximum safety.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Contact Process Section (Steps - Icon-Based) -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-broto-yellow text-center mb-12 uppercase tracking-wider">
+                Enrollment Process
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8">
+                <!-- Step 1: Choose Package -->
+                <div class="text-center p-6 rounded-xl border border-broto-grey hover:border-broto-yellow transition duration-300">
+                    <div class="w-16 h-16 bg-broto-yellow text-broto-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="package" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-white">Choose Your Package</h3>
+                    <p class="text-gray-400 text-sm">Review our fees table and select the driving course and duration that meets your needs.</p>
+                </div>
+                <!-- Step 2: Schedule Lesson -->
+                <div class="text-center p-6 rounded-xl border border-broto-grey hover:border-broto-yellow transition duration-300">
+                    <div class="w-16 h-16 bg-broto-yellow text-broto-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="calendar-plus" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-white">Schedule Your Lesson</h3>
+                    <p class="text-gray-400 text-sm">Book your initial session online or by phone, choosing a time slot that works best for you.</p>
+                </div>
+                <!-- Step 3: Meet Instructor -->
+                <div class="text-center p-6 rounded-xl border border-broto-grey hover:border-broto-yellow transition duration-300">
+                    <div class="w-16 h-16 bg-broto-yellow text-broto-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="user-check" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-white">Meet Your Instructor</h3>
+                    <p class="text-gray-400 text-sm">We'll pair you with a certified expert who will conduct your first lesson, often with home pickup.</p>
+                </div>
+                <!-- Step 4: Drive Confidently -->
+                <div class="text-center p-6 rounded-xl border border-broto-grey hover:border-broto-yellow transition duration-300">
+                    <div class="w-16 h-16 bg-broto-yellow text-broto-black rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="award" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-white">Drive Confidently</h3>
+                    <p class="text-gray-400 text-sm">Continue your lessons until you are ready for your test, equipped with all the skills for safe driving.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5.5. Why Choose Us? Section (Updated to new design & fixed background) -->
+    <section class="why-choose-us-bg py-20 relative">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Left Content -->
+                <div class="text-white">
+                    <p class="text-lg font-semibold text-broto-yellow mb-2 tracking-widest">
+                        &lt;&lt;&lt; Why Choose Us &gt;&gt;&gt;
+                    </p>
+                    <h2 class="text-5xl md:text-6xl font-black leading-tight mb-8">
+                        Why You Should Choose Our <span class="text-broto-yellow">Driving School?</span>
+                    </h2>
+                </div>
+                
+                <!-- Right Text Block -->
+                <div class="text-gray-300 text-lg">
+                    <p>
+                        Choose our driving school for expert instruction tailored to your needs. Our experienced instructors prioritize safety, offering comprehensive lessons covering everything from basic maneuvers to advanced techniques. We ensure you gain the knowledge and confidence required to pass your test and become a lifelong responsible driver.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Benefits Grid (Added animations/hover effects) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
+                <!-- Benefit 1: Quality Service -->
+                <div class="text-center p-6 group cursor-pointer transform transition duration-300 hover:scale-[1.03] benefit-icon-box">
+                    <i data-lucide="user-check" class="benefit-icon w-12 h-12 text-broto-red mx-auto mb-4 transition duration-300 group-hover:text-broto-yellow"></i>
+                    <h3 class="text-lg font-bold text-white">Quality Service</h3>
+                    <p class="text-gray-400 text-sm mt-1">Modern cars and customized training plans for every student.</p>
+                </div>
+                <!-- Benefit 2: Experienced Trainer -->
+                <div class="text-center p-6 group cursor-pointer transform transition duration-300 hover:scale-[1.03] benefit-icon-box">
+                    <i data-lucide="graduation-cap" class="benefit-icon w-12 h-12 text-broto-red mx-auto mb-4 transition duration-300 group-hover:text-broto-yellow"></i>
+                    <h3 class="text-lg font-bold text-white">Experienced Trainer</h3>
+                    <p class="text-gray-400 text-sm mt-1">Certified instructors with years of road experience and patience.</p>
+                </div>
+                <!-- Benefit 3: Fast Learning -->
+                <div class="text-center p-6 group cursor-pointer transform transition duration-300 hover:scale-[1.03] benefit-icon-box">
+                    <i data-lucide="zap" class="benefit-icon w-12 h-12 text-broto-red mx-auto mb-4 transition duration-300 group-hover:text-broto-yellow"></i>
+                    <h3 class="text-lg font-bold text-white">Fast Learning</h3>
+                    <p class="text-gray-400 text-sm mt-1">Structured modules designed to maximize retention and road time.</p>
+                </div>
+                <!-- Benefit 4: Provide Licence -->
+                <div class="text-center p-6 group cursor-pointer transform transition duration-300 hover:scale-[1.03] benefit-icon-box">
+                    <i data-lucide="file-text" class="benefit-icon w-12 h-12 text-broto-red mx-auto mb-4 transition duration-300 group-hover:text-broto-yellow"></i>
+                    <h3 class="text-lg font-bold text-white">Provide Licence</h3>
+                    <p class="text-gray-400 text-sm mt-1">Full support for RTO documentation and successful test passing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Contact Us Section  -->
+    <section id="contact-section" class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-white mb-4 text-center">
+                FEEL FREE TO <span class="text-broto-yellow">WRITE TO US</span>
+            </h2>
+            <p class="text-gray-400 text-lg mb-10 text-center">We will reach you soon to discuss your driving goals.</p>
+    
+            <form id="contact-us-form" class="max-w-3xl mx-auto space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Name -->
+                    <div class="relative">
+                        <input type="text" id="name" name="name" placeholder="Your Name" required
+                            class="w-full bg-broto-dark text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 validation-input">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter your full name</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Number -->
+                    <div class="relative">
+                        <input type="tel" id="phone" name="phone" placeholder="Phone Number" required maxlength="10"
+                            class="w-full bg-broto-dark text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 validation-input">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter a valid 10-digit phone number</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="relative">
+                        <input type="email" id="email" name="email" placeholder="Email" required
+                            class="w-full bg-broto-dark text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 validation-input">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter a valid email address</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Location -->
+                    <div class="relative">
+                        <input type="text" id="location" name="location" placeholder="Your Current Location (Bhubaneswar)" required
+                            class="w-full bg-broto-dark text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 validation-input">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter your location</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Message -->
+                <div class="relative">
+                    <textarea id="message" name="message" placeholder="Write a message" rows="4" required
+                        class="w-full bg-broto-dark text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 validation-input"></textarea>
+                    <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                        <span>Please enter your message</span>
+                    </div>
+                </div>
+    
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full bg-broto-yellow text-broto-black font-bold text-lg px-10 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-[1.02] shadow-xl">
+                    Send
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- 7. Book Lesson CTA Banner (Fixed Image and Animation) -->
+    <section id="book-lesson" class="book-lesson-banner h-64 flex items-center justify-center">
+        <div class="tire-mark hidden md:block"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full">
+            
+            <!-- Left Text & Button -->
+            <div class="text-white text-left p-4">
+                <h2 class="text-4xl sm:text-5xl font-black leading-tight mb-4">
+                    Book Your First Driving Lesson Today
+                </h2>
+                <a href="#book-lesson-form-section" class="inline-block bg-broto-black text-white font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-grey transition duration-300 shadow-xl">
+                    Book Now
+                </a>
+            </div>
+
+            <!-- Right Car Image (Fixed Placeholder URL for better fit) -->
+            <div class="relative h-full hidden lg:block" style="width: 500px; height: 100%;">
+                <img src="https://placehold.co/400x200/ffffff/000000?text=Stylized+White+Car+with+Plate" 
+                     alt="Stylized White Car" 
+                     class="absolute bottom-0 right-0 w-full car-image-animated" 
+                     style="height: 160%;"> <!-- Adjusted height for better overlap -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- 7.5. Book Lesson Form (The form that the Book Now button links to) -->
+    <section id="book-lesson-form-section" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-white mb-4 text-center">
+                COMPLETE YOUR <span class="text-broto-yellow">BOOKING</span>
+            </h2>
+             <p class="text-broto-yellow text-sm font-semibold uppercase mb-8 text-center">Quick Booking Form</p>
+            <div class="max-w-3xl mx-auto">
+
+                <form id="book-lesson-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Name -->
+                        <input type="text" placeholder="Your Name" required
+                            class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <!-- Phone Number -->
+                        <input type="tel" placeholder="Phone Number" required
+                            class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <!-- Package -->
+                        <select required
+                            class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                            <option value="" disabled selected>Select Package</option>
+                            <option value="p1">Package 1 (₹3000)</option>
+                            <option value="p2">Package 2 (₹3500)</option>
+                            <option value="p3">Package 3 (₹4500)</option>
+                            <option value="p4">Package 4 (₹5000)</option>
+                        </select>
+                    </div>
+                     <!-- Preferred Time slot -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="relative">
+                            <button type="button" onclick="toggleTimeSlotModal()" class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 text-left">
+                                <span id="time-slot-display">Select Time Slot</span>
+                            </button>
+                            <input type="hidden" id="selected-time-slot" name="time-slot">
+                        </div>
+                        <div class="relative">
+                            <button type="button" onclick="toggleTimeSlotModal()" class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200 text-left">
+                                <span id="detailed-time-display">Select Time</span>
+                            </button>
+                            <input type="hidden" id="selected-detailed-time" name="detailed-time">
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <button type="submit"
+                        class="w-full bg-broto-yellow text-broto-black font-bold text-lg px-10 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-[1.02] shadow-xl">
+                        Book Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. Footer -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
+                <!-- Column 1: Logo & Social -->
+                <div>
+                    <a href="index.html" class="text-2xl font-extrabold tracking-widest mb-4 block">
+                        <span class="text-white">GOLDEN</span>
+                        <span class="text-broto-yellow">HANDS</span>
+                    </a>
+
+                    <p class="text-gray-400 text-sm mb-4">
+                        Golden Hands Driving School. Your path to becoming a safe, skilled, and confident driver.
+                    </p>
+                    <div class="flex space-x-3 text-broto-yellow">
+                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="https://www.instagram.com/goldenhands_driving_school?igsh=MW5wcTd5N3M5bGthcA==" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="https://youtube.com/@goldenhandsdrivingschool?si=yAxNO9vSzqVesBBI" aria-label="YouTube"><i data-lucide="youtube" class="w-5 h-5 hover:text-white transition"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links (Updated) -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">Gallery</a></li>
+                        <li><a href="#faq-section" class="text-gray-400 hover:text-broto-yellow transition">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Services (Updated) -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Training</a></li>
+                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Licence</a></li>
+                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Car Buying Consultant</a></li>
+                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Pre-Delivery Inspection (PDI)</a></li>
+                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">RTO Service</a></li>
+                        <li><a href="#fees-section" class="text-gray-400 hover:text-broto-yellow transition">Packages & Fees</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 & 5: Contact & Branding -->
+                <div class="col-span-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
+                            <p class="text-gray-400 text-sm mb-2">Office: C-3/12, Satya Vihar, BBSR -PIN</p>
+                            <a href="tel:+918144600000" class="text-broto-yellow hover:text-white font-medium block">+91 8144600000</a>
+                            <a href="mailto:info@Sysmotor.in" class="text-broto-yellow hover:text-white font-medium block">goldenhandsdrivingschool@gmail.com</a>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
+                            <img src="https://placehold.co/150x80/FFC107/000000?text=LEARN+&+DRIVE" alt="Learn & Drive Logo" class="w-36 h-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Copyright Section) -->
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2025 SYS Drawnest. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

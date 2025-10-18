@@ -1,0 +1,113 @@
+<!-- Top Contact Bar & Search Panel -->
+<div class="bg-broto-black text-white text-sm py-2 border-b border-broto-grey hidden md:block">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <div class="flex space-x-6">
+            <a href="tel:+919040040165" class="flex items-center hover:text-broto-yellow transition duration-300">
+                <i data-lucide="phone" class="w-4 h-4 mr-2"></i> +91 9040040165
+            </a>
+            <a href="mailto:goldenhandsdrivingschool@gmail.com" class="flex items-center hover:text-broto-yellow transition duration-300">
+                <i data-lucide="mail" class="w-4 h-4 mr-2"></i> goldenhandsdrivingschool@gmail.com
+            </a>
+        </div>
+        <div class="flex space-x-4 items-center">
+            <i data-lucide="search" id="search-toggle" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
+            <i data-lucide="user" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
+            <button id="register-toggle" class="bg-broto-yellow text-broto-black text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-yellow-400 transition duration-300">
+                Register
+            </button>
+            <button id="login-toggle" class="border border-broto-yellow text-broto-yellow text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-broto-yellow hover:text-broto-black transition duration-300">
+                Login
+            </button>
+            <a href="#book-lesson" class="bg-broto-yellow text-broto-black text-xs font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
+                Book Lesson
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Search Panel (Hidden by default) -->
+<div id="search-panel" class="hidden bg-broto-dark border-b border-broto-yellow py-3 z-30">
+    <div class="max-w-7xl mx-auto px-4 flex">
+        <input type="text" id="search-input" placeholder="Search courses, locations, or instructors..."
+               class="w-full bg-broto-black text-white p-2 rounded-lg border border-broto-grey focus:ring-broto-yellow focus:border-broto-yellow">
+    </div>
+</div>
+
+<!-- Main Navigation Bar -->
+<nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Mobile Menu Button (Left on mobile) -->
+            <button type="button" id="mobile-menu-toggle" class="inline-flex items-center justify-center p-2 rounded-md text-broto-yellow lg:hidden order-1" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Logo - Centered on mobile, left on desktop -->
+            <a href="index.html" class="text-3xl font-extrabold tracking-widest text-center w-full lg:w-auto lg:text-left">
+                <span class="text-white">GOLDEN</span>
+                <span class="text-broto-yellow">HANDS</span>
+            </a>
+            
+            <!-- Desktop Menu Items -->
+            <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium order-3">
+                <a href="index.html" class="hover:text-broto-yellow transition duration-300">Home</a>
+                
+                <!-- Services Dropdown -->
+                <div class="relative group">
+                    <button onclick="toggleDropdown()" class="flex items-center hover:text-broto-yellow transition duration-300">
+                        Services <i data-lucide="chevron-down" class="w-4 h-4 ml-1 transition-transform duration-300"></i>
+                    </button>
+                    <div id="services-dropdown" class="dropdown-menu absolute left-0 mt-4 w-64 bg-broto-grey rounded-lg shadow-xl z-50">
+                        <div class="py-2">
+                            <a href="driving-training.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Training</a>
+                            <a href="driving-license.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Licence</a>
+                            <a href="car-buying-consultant.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Car Buying Consultant</a>
+                            <a href="rto-services.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">RTO Service</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="about.html" class="hover:text-broto-yellow transition duration-300">About</a>
+                <a href="gallery.html" class="hover:text-broto-yellow transition duration-300">Gallery</a>
+                <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Contact</a>
+                <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Location</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu Drawer (Right Side) -->
+<div id="mobile-menu-drawer" class="fixed top-0 right-0 w-64 h-full bg-broto-dark p-6 z-50 shadow-2xl lg:hidden">
+    <div class="flex justify-end mb-8">
+        <button id="mobile-menu-close" class="text-broto-yellow hover:text-white">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+    </div>
+    <div class="space-y-4 text-lg font-medium">
+        <a href="index.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Home</a>
+        
+        <!-- Services Dropdown for Mobile -->
+        <div class="relative">
+            <button onclick="toggleMobileServices()" class="flex items-center justify-between w-full hover:text-broto-yellow transition duration-300">
+                <span>Services</span>
+                <i data-lucide="chevron-down" id="mobile-services-arrow" class="w-5 h-5 transition-transform duration-300"></i>
+            </button>
+            <div id="mobile-services-dropdown" class="dropdown-menu pl-4 mt-2 space-y-3">
+                <a href="driving-training.html" class="block text-broto-yellow hover:text-white transition duration-300" onclick="toggleMobileMenu(false)">Driving Training</a>
+                <a href="driving-license.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Driving Licence</a>
+                <a href="car-buying-consultant.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Car Buying Consultant</a>
+                <a href="rto-services.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">RTO Service</a>
+            </div>
+        </div>
+        
+        <a href="about.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">About</a>
+        <a href="gallery.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Gallery</a>
+        <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Contact</a>
+        <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Location</a>
+        <div class="pt-4 border-t border-broto-grey space-y-2">
+            <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleLoginModal(true); toggleMobileMenu(false);">Login / Register</button>
+            <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleSearch(); toggleMobileMenu(false);">Search</button>
+        </div>
+    </div>
+</div>

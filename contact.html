@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Golden Hands Driving School</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        /* Custom scrollbar for better aesthetics on dark theme */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        /* Elegant gradient backgrounds */
+        .contact-hero-bg {
+            background: linear-gradient(135deg, #111111 0%, #000000 50%, #1a1a1a 100%);
+        }
+        
+        .contact-form-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #111111 100%);
+        }
+        
+        .info-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 15px 30px rgba(255, 193, 7, 0.1);
+        }
+        
+        .contact-input {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-input:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+            background: rgba(26, 26, 26, 0.9);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #FFC107 0%, #f59e0b 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 193, 7, 0.3);
+        }
+        
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Floating animation for decorative elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Pulse animation for icons */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .pulse-icon {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Validation styles */
+        .validation-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .validation-input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .validation-message {
+            transition: all 0.3s ease;
+        }
+    </style>
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        // Form handling with validation
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            let isValid = true;
+            const firstInvalidField = [];
+            
+            // Validate all fields
+            const inputs = document.querySelectorAll('.validation-input');
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                if (!validateField(input, fieldName, messageElement)) {
+                    isValid = false;
+                    if (firstInvalidField.length === 0) {
+                        firstInvalidField.push(input);
+                    }
+                }
+            });
+            
+            if (isValid) {
+                // Show success message
+                showMessage('Thank you for your message! We will get back to you within 24 hours.', 'success');
+                
+                // Reset form
+                event.target.reset();
+                
+                // Reset all validation states
+                inputs.forEach(input => {
+                    input.classList.remove('success', 'error');
+                    const messageElement = input.parentElement.querySelector('.validation-message');
+                    messageElement.classList.add('hidden');
+                });
+            } else {
+                // Focus on first invalid field
+                if (firstInvalidField.length > 0) {
+                    firstInvalidField[0].focus();
+                }
+                showMessage('Please fix the errors in the form before submitting.', 'error');
+            }
+        }
+
+        // Validation functions
+        const validators = {
+            name: (value) => {
+                return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+            },
+            phone: (value) => {
+                if (value === '') return true; // Phone is optional
+                return /^[6-9]\d{9}$/.test(value);
+            },
+            email: (value) => {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            },
+            subject: (value) => {
+                return value !== ''; // Subject is optional but should be validated if selected
+            },
+            message: (value) => {
+                return value.trim().length >= 10;
+            }
+        };
+        
+        // Error messages
+        const errorMessages = {
+            name: 'Please enter a valid name (minimum 2 characters, letters only)',
+            phone: 'Please enter a valid 10-digit phone number starting with 6-9',
+            email: 'Please enter a valid email address',
+            subject: 'Please select a subject',
+            message: 'Please enter a message with at least 10 characters'
+        };
+
+        function validateField(input, fieldName, messageElement) {
+            const value = input.value.trim();
+            
+            // For optional fields, if empty, consider valid
+            if ((fieldName === 'phone' || fieldName === 'subject') && value === '') {
+                input.classList.remove('error', 'success');
+                messageElement.classList.add('hidden');
+                return true;
+            }
+            
+            const isValid = validators[fieldName](value);
+            
+            if (isValid) {
+                input.classList.remove('error');
+                input.classList.add('success');
+                messageElement.classList.add('hidden');
+                return true;
+            } else {
+                input.classList.remove('success');
+                input.classList.add('error');
+                messageElement.querySelector('span').textContent = errorMessages[fieldName];
+                messageElement.classList.remove('hidden');
+                return false;
+            }
+        }
+
+        function showMessage(message, type = 'success') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `form-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Initialize form submission
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', handleContactSubmit);
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Add floating animation to decorative elements
+            const floatingElements = document.querySelectorAll('.floating');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.5}s`;
+            });
+
+            // Real-time validation for each input
+            const inputs = contactForm.querySelectorAll('.validation-input');
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                input.addEventListener('input', function() {
+                    validateField(input, fieldName, messageElement);
+                });
+                
+                input.addEventListener('blur', function() {
+                    validateField(input, fieldName, messageElement);
+                });
+            });
+            
+            // Phone number specific validation - only allow numbers
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                e.target.value = e.target.value.replace(/\D/g, '');
+                
+                // Limit to 10 digits
+                if (e.target.value.length > 10) {
+                    e.target.value = e.target.value.slice(0, 10);
+                }
+                
+                const messageElement = phoneInput.parentElement.querySelector('.validation-message');
+                validateField(phoneInput, 'phone', messageElement);
+            });
+        };
+    </script>
+</head>
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+               <!-- Logo - Centered on mobile, left on desktop -->
+            <a href="index.html" class="text-3xl font-extrabold tracking-widest text-center w-full lg:w-auto lg:text-left">
+                <span class="text-white">GOLDEN</span>
+                <span class="text-broto-yellow">HANDS</span>
+            </a>
+                
+                <!-- Desktop Menu Items -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium">
+                    <a href="index.html" class="hover:text-broto-yellow transition duration-300">Home</a>
+                    <a href="index.html#service-section" class="hover:text-broto-yellow transition duration-300">Services</a>
+                    <a href="about.html" class="hover:text-broto-yellow transition duration-300">About</a>
+                    <a href="index.html#gallery-section" class="hover:text-broto-yellow transition duration-300">Gallery</a>
+                    <a href="contact.html" class="text-broto-yellow font-semibold">Contact</a>
+                </div>
+                
+                <!-- CTA Button -->
+                <a href="index.html#book-lesson" class="hidden md:block bg-broto-yellow text-broto-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
+                    Book Lesson
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="contact-hero-bg py-20 lg:py-28 relative overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute top-10 left-10 w-20 h-20 bg-broto-yellow/10 rounded-full floating"></div>
+        <div class="absolute bottom-20 right-20 w-16 h-16 bg-broto-yellow/5 rounded-full floating" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/3 right-1/4 w-12 h-12 bg-broto-yellow/8 rounded-full floating" style="animation-delay: 2s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
+                    Get In <span class="text-broto-yellow">Touch</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8">
+                    Ready to start your driving journey? Contact us today and let's get you on the road to independence.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#contact-form" class="bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105">
+                        Send Message
+                    </a>
+                    <a href="tel:+919040040165" class="border border-broto-yellow text-broto-yellow font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-yellow hover:text-broto-black transition duration-300">
+                        Call Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Information Section -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    How Can We <span class="text-broto-yellow">Help You?</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    We're here to answer any questions you may have about our driving courses, packages, or scheduling. Reach out to us and we'll respond as soon as we can.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Contact Card 1 -->
+                <div class="info-card p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-broto-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6 pulse-icon">
+                        <i data-lucide="phone" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Call Us</h3>
+                    <p class="text-gray-400 mb-4">Speak directly with our team during business hours</p>
+                    <a href="tel:+919040040165" class="text-broto-yellow font-semibold text-lg hover:underline">+91 9040040165</a>
+                </div>
+                
+                <!-- Contact Card 2 -->
+                <div class="info-card p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-broto-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6 pulse-icon">
+                        <i data-lucide="mail" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Email Us</h3>
+                    <p class="text-gray-400 mb-4">Send us an email and we'll respond within 24 hours</p>
+                    <a href="mailto:goldenhandsdrivingschool@gmail.com" class="text-broto-yellow font-semibold text-lg hover:underline">goldenhandsdrivingschool@gmail.com</a>
+                </div>
+                
+                <!-- Contact Card 3 -->
+                <div class="info-card p-8 rounded-2xl text-center">
+                    <div class="w-16 h-16 bg-broto-yellow/20 rounded-full flex items-center justify-center mx-auto mb-6 pulse-icon">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Visit Us</h3>
+                    <p class="text-gray-400 mb-4">Come see us at our training center in Bhubaneswar</p>
+                    <p class="text-broto-yellow font-semibold">Satyavihar, Bhubaneswar</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form & Map Section -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Contact Form -->
+                <div class="contact-form-bg p-8 rounded-2xl">
+                    <h2 class="text-3xl font-extrabold mb-2">Send Us a <span class="text-broto-yellow">Message</span></h2>
+                    <p class="text-gray-400 mb-8">Fill out the form below and we'll get back to you soon</p>
+                    
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Name Field -->
+                            <div class="relative">
+                                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+                                <input type="text" id="name" name="name" required 
+                                    class="contact-input validation-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                                    <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                                    <span>Please enter a valid name</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Email Field -->
+                            <div class="relative">
+                                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
+                                <input type="email" id="email" name="email" required 
+                                    class="contact-input validation-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                                    <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                                    <span>Please enter a valid email address</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Phone Field -->
+                            <div class="relative">
+                                <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" 
+                                    class="contact-input validation-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                                    <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                                    <span>Please enter a valid phone number</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Subject Field -->
+                            <div class="relative">
+                                <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                                <select id="subject" name="subject" 
+                                    class="contact-input validation-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                    <option value="">Select a subject</option>
+                                    <option value="driving-lessons">Driving Lessons</option>
+                                    <option value="license-assistance">License Assistance</option>
+                                    <option value="car-consultation">Car Buying Consultation</option>
+                                    <option value="rto-services">RTO Services</option>
+                                    <option value="general-inquiry">General Inquiry</option>
+                                </select>
+                                <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                                    <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                                    <span>Please select a subject</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Field -->
+                        <div class="relative">
+                            <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Your Message *</label>
+                            <textarea id="message" name="message" rows="5" required 
+                                class="contact-input validation-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow" 
+                                placeholder="Tell us how we can help you..."></textarea>
+                            <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                                <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                                <span>Please enter a message with at least 10 characters</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" 
+                            class="submit-btn w-full text-broto-black font-bold text-lg p-4 rounded-xl transition duration-300">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Map & Additional Info -->
+                <div class="space-y-8">
+                    <!-- Map -->
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3740.647521366209!2d85.8220112753378!3d20.29601438133317!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1909d2d5170aa5%3A0xfc580e2b68b33fa8!2sBhubaneswar%2C%20Odisha!5e0!3m2!1sen!2sin!4v1698765432101!5m2!1sen!2sin" 
+                            width="100%" 
+                            height="300" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    
+                    <!-- Business Hours -->
+                    <div class="contact-form-bg p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="clock" class="w-5 h-5 mr-2 text-broto-yellow"></i>
+                            Business Hours
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex justify-between">
+                                <span class="text-gray-400">Monday - Friday</span>
+                                <span class="font-medium">7:00 AM - 9:00 PM</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-400">Saturday</span>
+                                <span class="font-medium">7:00 AM - 8:00 PM</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-gray-400">Sunday</span>
+                                <span class="font-medium">8:00 AM - 6:00 PM</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Emergency Contact -->
+                    <div class="contact-form-bg p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i data-lucide="alert-triangle" class="w-5 h-5 mr-2 text-broto-red"></i>
+                            Emergency Contact
+                        </h3>
+                        <p class="text-gray-400 mb-2">For urgent matters outside business hours</p>
+                        <a href="tel:+919040040165" class="text-broto-yellow font-semibold text-lg">+91 9040040165</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Frequently Asked <span class="text-broto-yellow">Questions</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Quick answers to common questions about our services</p>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="contact-form-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-2 flex items-center">
+                        <i data-lucide="help-circle" class="w-5 h-5 mr-2 text-broto-yellow"></i>
+                        How quickly can I get my driving license?
+                    </h3>
+                    <p class="text-gray-400">With our comprehensive training and RTO assistance, most students obtain their license within 4-6 weeks of starting lessons, depending on the package selected.</p>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="contact-form-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-2 flex items-center">
+                        <i data-lucide="help-circle" class="w-5 h-5 mr-2 text-broto-yellow"></i>
+                        Do you provide pick-up and drop services?
+                    </h3>
+                    <p class="text-gray-400">Yes, we offer convenient pick-up and drop services for most of our packages. Check our fees section for details on which packages include this service.</p>
+                </div>
+                
+                <!-- FAQ 3 -->
+                <div class="contact-form-bg p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-2 flex items-center">
+                        <i data-lucide="help-circle" class="w-5 h-5 mr-2 text-broto-yellow"></i>
+                        What documents do I need to start driving lessons?
+                    </h3>
+                    <p class="text-gray-400">You'll need a valid learner's license, address proof, age proof, and passport-sized photographs. We can assist you in obtaining a learner's license if needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-broto-black">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-extrabold mb-6">
+                Ready to Start Your <span class="text-broto-yellow">Driving Journey?</span>
+            </h2>
+            <p class="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
+                Don't wait any longer to gain the freedom and confidence that comes with driving. Book your first lesson today!
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                <a href="index.html#book-lesson" class="bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105">
+                    Book Your First Lesson
+                </a>
+                <a href="tel:+919040040165" class="border border-broto-yellow text-broto-yellow font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-yellow hover:text-broto-black transition duration-300">
+                    Call to Inquire
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
+                <!-- Column 1: Logo & Social -->
+                <div>
+                    <a href="index.html" class="text-2xl font-extrabold tracking-widest mb-4 block">
+                        <span class="text-white">GOLDEN</span>
+                        <span class="text-broto-yellow">HANDS</span>
+                    </a>
+
+                    <p class="text-gray-400 text-sm mb-4">
+                        Your path to becoming a safe, skilled, and confident driver.
+                    </p>
+                    <div class="flex space-x-3 text-broto-yellow">
+                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" class="w-5 h-5 hover:text-white transition"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-broto-yellow transition">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-broto-yellow transition">About Us</a></li>
+                        <li><a href="index.html#gallery-section" class="text-gray-400 hover:text-broto-yellow transition">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-broto-yellow transition">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Services -->
+                <div>
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Training</a></li>
+                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Licence</a></li>
+                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Car Buying Consultant</a></li>
+                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">RTO Service</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 & 5: Contact & Branding -->
+                <div class="col-span-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
+                            <p class="text-gray-400 text-sm mb-2">Satyavihar, Bhubaneswar</p>
+                            <a href="tel:+919040040165" class="text-broto-yellow hover:text-white font-medium block">+91 9040040165</a>
+                            <a href="mailto:goldenhandsdrivingschool@gmail.com" class="text-broto-yellow hover:text-white font-medium block">goldenhandsdrivingschool@gmail.com</a>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
+                            <div class="bg-broto-yellow/20 p-3 rounded-lg">
+                                <span class="text-broto-yellow font-bold">LEARN & DRIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Copyright Section) -->
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 Golden Hands Driving School. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
+                    <a href="#" class="hover:text-broto-yellow transition">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

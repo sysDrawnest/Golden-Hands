@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Gallery - GOLDEN HANDS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        .service-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 15px 30px rgba(255, 193, 7, 0.1);
+        }
+        
+        .photo-card {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .photo-card:hover {
+            border-color: rgba(255, 193, 7, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        /* New Driving Gallery Styles */
+        .driving-gallery-container {
+            padding: 1rem;
+            background: #000000;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .driving-gallery {
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            background: #000;
+        }
+        
+        .driving-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(1.05);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .driving-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .driving-slide-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .driving-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .driving-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 1.5rem 1rem 1rem;
+            transform: translateY(10px);
+            transition: transform 0.4s ease;
+        }
+        
+        .driving-slide.active .driving-caption {
+            transform: translateY(0);
+        }
+        
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 193, 7, 0.5);
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 193, 7, 0.2);
+            border-color: rgba(255, 193, 7, 0.8);
+            transform: scale(1.1);
+        }
+        
+        .thumbnail-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: #ffc107 #333;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 3px;
+        }
+        
+        .thumbnail-container::-webkit-scrollbar-thumb {
+            background: #ffc107;
+            border-radius: 3px;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+        
+        .thumbnail:hover {
+            opacity: 0.8;
+        }
+        
+        .thumbnail.active {
+            opacity: 1;
+            border-color: #ffc107;
+        }
+        
+        .thumbnail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #ffc107;
+            width: 0%;
+            transition: width 0.1s linear;
+            z-index: 10;
+        }
+        
+        .services-gallery {
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .services-scroll {
+            position: absolute;
+            display: flex;
+            animation: scrollLeft 20s linear infinite;
+        }
+        
+        .services-scroll:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .service-img {
+            width: 200px;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+            display: block;
+        }
+        
+        .gallery-container {
+            gap: 0.75rem;
+        }
+        
+        .service-card-padding {
+            padding: 0.75rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .driving-gallery {
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .driving-gallery {
+                height: 250px;
+            }
+            
+            .thumbnail {
+                width: 70px;
+                height: 50px;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        let currentSlide = 0;
+        let slides = [];
+        let thumbnails = [];
+        let progressBar;
+        let slideInterval;
+        
+        function showSlide(index) {
+            // Remove active class from all slides and thumbnails
+            slides.forEach(slide => slide.classList.remove('active'));
+            thumbnails.forEach(thumb => thumb.classList.remove('active'));
+            
+            // Add active class to current slide and thumbnail
+            slides[index].classList.add('active');
+            thumbnails[index].classList.add('active');
+            
+            currentSlide = index;
+            
+            // Reset progress bar
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+        }
+        
+        function nextSlide() {
+            let next = currentSlide + 1;
+            if (next >= slides.length) next = 0;
+            showSlide(next);
+        }
+        
+        function prevSlide() {
+            let prev = currentSlide - 1;
+            if (prev < 0) prev = slides.length - 1;
+            showSlide(prev);
+        }
+        
+        function goToSlide(index) {
+            showSlide(index);
+            resetInterval();
+        }
+        
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000);
+            
+            // Reset progress bar animation
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = '100%';
+                }, 10);
+            }
+        }
+
+        function updateProgressBar() {
+            if (progressBar) {
+                progressBar.style.width = '100%';
+            }
+        }
+
+        window.onload = function() {
+            lucide.createIcons();
+            
+            slides = document.querySelectorAll('.driving-slide');
+            thumbnails = document.querySelectorAll('.thumbnail');
+            progressBar = document.querySelector('.progress-bar');
+            
+            if (slides.length > 0) {
+                showSlide(0);
+                resetInterval();
+                updateProgressBar();
+            }
+            
+            const servicesScrolls = document.querySelectorAll('.services-scroll');
+            
+            servicesScrolls.forEach(scroll => {
+                const clone = scroll.cloneNode(true);
+                scroll.parentNode.appendChild(clone);
+                
+                const contentWidth = scroll.scrollWidth;
+                const containerWidth = scroll.parentNode.clientWidth;
+                const duration = (contentWidth / containerWidth) * 20;
+                
+                scroll.style.animationDuration = `${duration}s`;
+                clone.style.animationDuration = `${duration}s`;
+            });
+        };
+    </script>
+</head>
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <section class="py-8 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-extrabold mb-2">
+                    Our <span class="text-broto-yellow">Photo Gallery</span>
+                </h2>
+                <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+                    Explore our training programs and services through our photo gallery.
+                </p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gallery-container">
+                <!-- Driving Training Section - Redesigned -->
+                <div class="lg:w-1/2 driving-gallery-container">
+                    <h2 class="text-lg font-bold mb-3 text-center text-broto-yellow">Driving Training</h2>
+                    <div class="driving-gallery">
+                        <!-- Progress Bar -->
+                        <div class="progress-bar"></div>
+                        
+                        <!-- Slide 1 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Professional Driving Instruction</p>
+                                    <p class="text-xs text-gray-300">Learn from experienced trainers with years of expertise</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 2 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1603712610494-7ce56b292826?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Road Safety Techniques</p>
+                                    <p class="text-xs text-gray-300">Master defensive driving in various conditions</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 3 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Vehicle Control Exercises</p>
+                                    <p class="text-xs text-gray-300">Practice in controlled environments with modern vehicles</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 4 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Practical Road Lessons</p>
+                                    <p class="text-xs text-gray-300">Real-world driving experience with personalized feedback</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Slide 5 -->
+                        <div class="driving-slide">
+                            <div class="driving-slide-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80" alt="Driving Training" class="driving-img">
+                                <div class="driving-caption">
+                                    <p class="text-sm font-semibold text-broto-yellow">Advanced Driving Skills</p>
+                                    <p class="text-xs text-gray-300">Learn advanced techniques for challenging road conditions</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Buttons -->
+                        <button class="nav-btn absolute left-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center" onclick="prevSlide(); resetInterval();" aria-label="Previous slide">
+                            <i data-lucide="chevron-left" class="w-5 h-5 text-broto-yellow"></i>
+                        </button>
+                        <button class="nav-btn absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center" onclick="nextSlide(); resetInterval();" aria-label="Next slide">
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-broto-yellow"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Thumbnail Navigation -->
+                    <div class="thumbnail-container">
+                        <div class="thumbnail active" onclick="goToSlide(0)">
+                            <img src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Professional Driving Instruction" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(1)">
+                            <img src="https://images.unsplash.com/photo-1603712610494-7ce56b292826?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Road Safety Techniques" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(2)">
+                            <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Vehicle Control Exercises" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(3)">
+                            <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Practical Road Lessons" class="thumbnail-img">
+                        </div>
+                        <div class="thumbnail" onclick="goToSlide(4)">
+                            <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Advanced Driving Skills" class="thumbnail-img">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Services Section -->
+                <div class="lg:w-1/2 flex flex-col gap-3">
+                    <!-- RTO Gallery -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">RTO Services</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Vehicle registration</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">License assistance</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba53377fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Document verification</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="RTO" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Permit processing</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- PDI Gallery -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">PDI Services</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Pre-delivery inspection</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Quality check</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Testing</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1593941707882-a5bba53377fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="PDI" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Final prep</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Car Consultant -->
+                    <div class="bg-broto-black rounded-xl shadow-lg service-card-padding">
+                        <h2 class="text-lg font-bold mb-2 text-center text-broto-yellow">Car Consultant</h2>
+                        <div class="services-gallery">
+                            <div class="services-scroll">
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1563720223485-744d442c91e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Consultation</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Recommendations</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Market analysis</p></div>
+                                </div>
+                                <div class="photo-card rounded-lg overflow-hidden mr-2">
+                                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Consultant" class="service-img">
+                                    <div class="p-1"><p class="text-xs text-gray-300">Guidance</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTO Services - SysDriving Premium Driving School</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Tailwind configuration in JS handles colors */
+        
+        /* Custom scrollbar for better aesthetics on dark theme */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+
+        /* Service specific styles */
+        .service-hero-bg {
+            background: linear-gradient(135deg, #111111 0%, #000000 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated background elements */
+        .floating-document {
+            position: absolute;
+            animation: floatDocument 25s linear infinite;
+            opacity: 0.1;
+            font-size: 6rem;
+            color: #ffc107;
+        }
+        
+        @keyframes floatDocument {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotate(360deg); }
+        }
+        
+        .service-card {
+            background: linear-gradient(145deg, #1a1a1a, #111111);
+            border: 1px solid rgba(255, 193, 7, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 193, 7, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .service-card:hover::before {
+            left: 100%;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(255, 193, 7, 0.3);
+            box-shadow: 0 20px 40px rgba(255, 193, 7, 0.15);
+        }
+        
+        .service-icon {
+            background: rgba(255, 193, 7, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,193,7,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .service-card:hover .service-icon {
+            background: rgba(255, 193, 7, 0.2);
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .service-card:hover .service-icon::after {
+            opacity: 1;
+        }
+        
+        .form-input {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .form-input:focus {
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+            background: rgba(26, 26, 26, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #FFC107 0%, #f59e0b 100%);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 25px rgba(255, 193, 7, 0.4);
+        }
+        
+        /* Text animation */
+        .animate-text {
+            background: linear-gradient(90deg, #ffc107, #f59e0b, #ffc107);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+        
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Pulse animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .pulse {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        /* Slide in animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 1s ease-out forwards;
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 1s ease-out forwards;
+        }
+        
+        .slide-in-up {
+            animation: slideInUp 1s ease-out forwards;
+        }
+        
+        /* Stagger animation delays */
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+        .stagger-6 { animation-delay: 0.6s; opacity: 0; }
+        .stagger-7 { animation-delay: 0.7s; opacity: 0; }
+        .stagger-8 { animation-delay: 0.8s; opacity: 0; }
+        
+        /* Glow effect */
+        .glow {
+            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+            animation: glowPulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glowPulse {
+            from {
+                box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 193, 7, 0.6);
+            }
+        }
+        
+        /* Document animation */
+        .document-float {
+            position: absolute;
+            animation: documentFloat 20s linear infinite;
+            opacity: 0.07;
+            font-size: 5rem;
+            color: #ffc107;
+        }
+        
+        @keyframes documentFloat {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            50% { transform: translateY(100px) rotate(180deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        /* Vehicle animation */
+        .vehicle-float {
+            position: absolute;
+            animation: vehicleFloat 15s linear infinite;
+            opacity: 0.1;
+            font-size: 4rem;
+            color: #ffc107;
+        }
+        
+        @keyframes vehicleFloat {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotate(-360deg); }
+        }
+    </style>
+    <script>
+        // Tailwind configuration for custom colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+
+        // Form handling
+        function handleServiceBooking(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const firstName = formData.get('firstName');
+            const address = formData.get('address');
+            const service = formData.get('service');
+            const phone = formData.get('phone');
+            const message = formData.get('message');
+            
+            // Simple validation
+            if (!firstName || !address || !service || !phone) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Add submission animation
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto"></i> Processing...';
+            lucide.createIcons();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                showMessage('Thank you for booking our RTO service! We will contact you within 24 hours.', 'success');
+                
+                // Reset form and button
+                event.target.reset();
+                submitBtn.innerHTML = 'Book Service Now';
+            }, 2000);
+        }
+
+        function showMessage(message, type = 'success') {
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Initialize form submission
+            document.getElementById('booking-form').addEventListener('submit', handleServiceBooking);
+            
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Add staggered animations to service cards
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach((card, index) => {
+                card.classList.add('stagger-' + (index + 1));
+                card.classList.add('slide-in-up');
+            });
+            
+            // Add hover effect to navigation
+            const navItems = document.querySelectorAll('nav a');
+            navItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all animated elements
+            document.querySelectorAll('.slide-in-up, .slide-in-left, .slide-in-right').forEach(el => {
+                observer.observe(el);
+            });
+        };
+    </script>
+</head>
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="text-3xl font-extrabold tracking-widest text-broto-yellow hover:scale-105 transition-transform duration-300">
+                    SYSMOTOR
+                </a>
+                
+                <!-- Desktop Menu Items -->
+                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium">
+                    <a href="index.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Home</a>
+                    <a href="driving-training.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Driving Training</a>
+                    <a href="driving-license.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Driving License</a>
+                    <a href="car-buying.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Car Buying</a>
+                    <a href="rto-services.html" class="text-broto-yellow font-semibold transform scale-105">RTO Services</a>
+                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300 transform hover:scale-105">Contact</a>
+                </div>
+                
+                <!-- CTA Button -->
+                <a href="#book-service" class="hidden md:block bg-broto-yellow text-broto-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300 transform hover:scale-105 pulse">
+                    Book Service
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="service-hero-bg py-20 lg:py-28 relative overflow-hidden">
+        <!-- Animated background elements -->
+        <div class="floating-document" style="top: 15%; animation-delay: 0s;">
+            <i data-lucide="file-text"></i>
+        </div>
+        <div class="floating-document" style="top: 65%; animation-delay: 8s;">
+            <i data-lucide="file-text"></i>
+        </div>
+        <div class="vehicle-float" style="left: 10%; animation-delay: 4s;">
+            <i data-lucide="car"></i>
+        </div>
+        <div class="vehicle-float" style="left: 80%; animation-delay: 12s;">
+            <i data-lucide="car"></i>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center slide-in-up">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
+                    RTO <span class="animate-text">Services</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 slide-in-up stagger-1">
+                    Complete RTO solutions from vehicle registration to documentation. We handle all the paperwork so you can focus on driving.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 slide-in-up stagger-2">
+                    <a href="#services" class="bg-broto-yellow text-broto-black font-bold text-lg px-8 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105 glow">
+                        View Services
+                    </a>
+                    <a href="#book-service" class="border border-broto-yellow text-broto-yellow font-bold text-lg px-8 py-3 rounded-xl hover:bg-broto-yellow hover:text-broto-black transition duration-300 transform hover:scale-105">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Overview -->
+    <section id="services" class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Complete <span class="animate-text">RTO Solutions</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    From vehicle registration to documentation services, we provide end-to-end RTO solutions for all your vehicle needs.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- RC Renewal Service -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="refresh-cw" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">RC Renewal</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Renew your vehicle registration certificate with our streamlined process and expert assistance.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document preparation</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Application submission</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Fitness certificate</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Fast-track processing</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹1200</span>
+                    </div>
+                </div>
+                
+                <!-- Other State Vehicle Registration -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Other State Vehicle Registration</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Register your out-of-state vehicle with our comprehensive assistance and documentation support.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>NOC processing</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Tax clearance</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>New registration</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹2500</span>
+                    </div>
+                </div>
+                
+                <!-- Vehicle Chalan -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="file-warning" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Vehicle Chalan</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Resolve your traffic challans and fines with our expert assistance and legal support.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Challan verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Payment assistance</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Dispute resolution</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Legal consultation</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹500</span>
+                    </div>
+                </div>
+                
+                <!-- Ownership Transfer -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="users" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Ownership Transfer</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Transfer vehicle ownership with our comprehensive documentation and RTO coordination services.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document preparation</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>NOC processing</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Tax clearance</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Transfer certificate</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹2000</span>
+                    </div>
+                </div>
+                
+                <!-- Mobile No Update -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="smartphone" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Mobile No Update</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Update your mobile number on vehicle registration for important alerts and notifications.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Quick online process</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>OTP verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Confirmation update</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹500</span>
+                    </div>
+                </div>
+                
+                <!-- RC Download -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="download" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">RC Download</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Download your vehicle registration certificate with our assistance and verification support.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Application assistance</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document verification</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Digital RC download</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Print assistance</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹300</span>
+                    </div>
+                </div>
+                
+                <!-- Hypothecation Withdrawal -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="file-minus" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Hypothecation Withdrawal</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Remove hypothecation from your vehicle registration after loan closure with our expert assistance.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>NOC from bank</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document preparation</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>RTO application</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Updated RC delivery</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹1500</span>
+                    </div>
+                </div>
+                
+                <!-- Driver Insurance -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="shield" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">Driver Insurance</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Get comprehensive driver insurance coverage with our assistance and policy selection guidance.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Policy comparison</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document assistance</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Premium payment</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Policy delivery</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Starting at ₹1000</span>
+                    </div>
+                </div>
+                
+                <!-- All Services -->
+                <div class="service-card p-8 rounded-2xl">
+                    <div class="service-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="settings" class="w-8 h-8 text-broto-yellow"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-center">All Services</h3>
+                    <p class="text-gray-400 mb-6 text-center">
+                        Complete RTO service package including all documentation and registration needs.
+                    </p>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>All RTO services</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Document preparation</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Application submission</span>
+                        </li>
+                        <li class="flex items-center transform hover:translate-x-2 transition-transform duration-300">
+                            <i data-lucide="check" class="w-5 h-5 text-broto-yellow mr-2"></i>
+                            <span>Priority processing</span>
+                        </li>
+                    </ul>
+                    <div class="text-center">
+                        <span class="text-broto-yellow font-bold text-xl floating">Custom Pricing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Service Section -->
+    <section id="book-service" class="py-16 bg-broto-black">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 slide-in-up">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Book Your <span class="animate-text">RTO Service</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Fill out the form below and we'll assist you with your RTO needs</p>
+            </div>
+            
+            <div class="bg-broto-dark p-8 rounded-2xl glow slide-in-up">
+                <form id="booking-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="slide-in-left">
+                            <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your first name">
+                        </div>
+                        <div class="slide-in-right">
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address *</label>
+                            <input type="text" id="address" name="address" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your complete address">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="slide-in-left">
+                            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">Select Service *</label>
+                            <select id="service" name="service" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <option value="">Choose a service</option>
+                                <option value="rc-renewal">RC Renewal</option>
+                                <option value="other-state-registration">Other State Vehicle Registration</option>
+                                <option value="vehicle-chalan">Vehicle Chalan</option>
+                                <option value="ownership-transfer">Ownership Transfer</option>
+                                <option value="mobile-update">Mobile No Update</option>
+                                <option value="rc-download">RC Download</option>
+                                <option value="hypothecation-withdrawal">Hypothecation Withdrawal</option>
+                                <option value="driver-insurance">Driver Insurance</option>
+                                <option value="all-services">All Services</option>
+                            </select>
+                        </div>
+                        <div class="slide-in-right">
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow"
+                                placeholder="Enter your phone number">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-in-up">
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Write Something (Optional)</label>
+                        <textarea id="message" name="message" rows="4" 
+                            class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow" 
+                            placeholder="Any specific requirements or questions about your RTO service..."></textarea>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="submit-btn w-full text-broto-black font-bold text-lg p-4 rounded-xl transition duration-300 slide-in-up">
+                        Book Service Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
+                <!-- Column 1: Logo & Social -->
+                <div class="slide-in-left">
+                    <a href="index.html" class="text-2xl font-extrabold tracking-widest text-broto-yellow mb-4 block hover:scale-105 transition-transform duration-300">
+                        SYSMOTOR
+                    </a>
+                    <p class="text-gray-400 text-sm mb-4">
+                        SYSMOTOR Driving School. Your path to becoming a safe, skilled, and confident driver.
+                    </p>
+                    <div class="flex space-x-3 text-broto-yellow">
+                        <a href="#" aria-label="Facebook" class="hover:scale-110 transition-transform duration-300"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Instagram" class="hover:scale-110 transition-transform duration-300"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="Twitter" class="hover:scale-110 transition-transform duration-300"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
+                        <a href="#" aria-label="LinkedIn" class="hover:scale-110 transition-transform duration-300"><i data-lucide="linkedin" class="w-5 h-5 hover:text-white transition"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="slide-in-up">
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Home</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">About Us</a></li>
+                        <li><a href="index.html#gallery-section" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Gallery</a></li>
+                        <li><a href="contact.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Services -->
+                <div class="slide-in-up">
+                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="driving-training.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Driving Training</a></li>
+                        <li><a href="driving-license.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Driving Licence</a></li>
+                        <li><a href="car-buying.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Car Buying Consultant</a></li>
+                        <li><a href="rto-services.html" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">RTO Service</a></li>
+                        <li><a href="index.html#fees-section" class="text-gray-400 hover:text-broto-yellow transition transform hover:translate-x-1 duration-300 block">Packages & Fees</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 & 5: Contact & Branding -->
+                <div class="col-span-2 slide-in-right">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
+                            <p class="text-gray-400 text-sm mb-2">Office: C-3/12, Palam Vihar, New Delhi - 110045</p>
+                            <a href="tel:+918144600000" class="text-broto-yellow hover:text-white font-medium block transform hover:translate-x-1 duration-300">+91 8144600000</a>
+                            <a href="mailto:info@Sysmotor.in" class="text-broto-yellow hover:text-white font-medium block transform hover:translate-x-1 duration-300">info@Sysmotor.in</a>
+                        </div>
+                        <div class="flex flex-col items-center sm:items-end">
+                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
+                            <div class="bg-broto-yellow/20 p-3 rounded-lg hover:scale-105 transition-transform duration-300">
+                                <span class="text-broto-yellow font-bold">LEARN & DRIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Copyright Section) -->
+            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
+                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 SysDriving School. All rights reserved.</p>
+                <div class="flex space-x-4 order-1 md:order-2">
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Privacy Policy</a>
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Terms and Conditions</a>
+                    <a href="#" class="hover:text-broto-yellow transition transform hover:scale-105 duration-300">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

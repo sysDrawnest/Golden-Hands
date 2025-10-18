@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Training Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .form-input {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+        }
+        .submit-btn {
+            background-color: #fbbf24;
+        }
+        .submit-btn:hover {
+            background-color: #f59e0b;
+        }
+        .bg-broto-dark {
+            background-color: #111827;
+        }
+        .bg-broto-black {
+            background-color: #1f2937;
+        }
+        .text-broto-yellow {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <!-- Book Service Section -->
+    <section id="book-service" class="py-16 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold mb-4">
+                    Book Your <span class="text-broto-yellow">Driving Training</span>
+                </h2>
+                <p class="text-gray-400 text-lg">Fill out the form below and we'll contact you to schedule your training</p>
+            </div>
+            
+            <div class="bg-broto-black p-8 rounded-2xl">
+                <form id="booking-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">Your Name *</label>
+                            <input type="text" id="Name" name="firstName" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address *</label>
+                            <input type="text" id="address" name="address" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">Select Service *</label>
+                            <select id="service" name="service" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                                <option value="">Choose a service</option>
+                                <option value="basic-training">Basic Driving Training</option>
+                                <option value="refresher-course">Refresher Course</option>
+                                <option value="defensive-driving">Defensive Driving</option>
+                                <option value="package-1">Package 1 (10 Hrs) - ₹3000</option>
+                                <option value="package-2">Package 2 (15 Hrs) - ₹3500</option>
+                                <option value="package-3">Package 3 (Altroz) - ₹4500</option>
+                                <option value="package-4">Package 4 (20 Hrs) - ₹4500</option>
+                                <option value="package-5">Package 5 (24 Hrs) - ₹5000</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required 
+                                class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Write Something (Optional)</label>
+                        <textarea id="message" name="message" rows="4" 
+                            class="form-input w-full text-white p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-broto-yellow" 
+                            placeholder="Any specific requirements or questions..."></textarea>
+                    </div>
+                    
+                    <button type="submit" 
+                        class="submit-btn w-full text-broto-black font-bold text-lg p-4 rounded-xl transition duration-300">
+                        Book Service Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
