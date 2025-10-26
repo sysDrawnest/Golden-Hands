@@ -1130,93 +1130,122 @@
             document.getElementById('login-form').reset();
         }
 
+        // Load components function
+        function loadComponent(componentId, filePath) {
+            return fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok for ${filePath}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById(componentId).innerHTML = data;
+                    return true;
+                })
+                .catch(error => {
+                    console.error(`Error loading component ${componentId}:`, error);
+                    return false;
+                });
+        }
+
         window.onload = function() {
-            // Initialize forms
-            const contactForm = document.getElementById('contact-us-form');
-            const bookForm = document.getElementById('book-lesson-form');
-            const loginForm = document.getElementById('login-form');
-            
-            if (contactForm) contactForm.addEventListener('submit', handleContactFormSubmit);
-            if (bookForm) bookForm.addEventListener('submit', handleBookLessonSubmit);
-            if (loginForm) loginForm.addEventListener('submit', handleLoginSubmit);
-
-            // UI Toggles
-            const searchToggle = document.getElementById('search-toggle');
-            const loginToggle = document.getElementById('login-toggle');
-            const registerToggle = document.getElementById('register-toggle');
-            const modalClose = document.getElementById('modal-close');
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileMenuClose = document.getElementById('mobile-menu-close');
-            
-            if (searchToggle) searchToggle.addEventListener('click', toggleSearch);
-            if (loginToggle) loginToggle.addEventListener('click', () => toggleLoginModal(true));
-            if (registerToggle) registerToggle.addEventListener('click', () => toggleLoginModal(true));
-            if (modalClose) modalClose.addEventListener('click', () => toggleLoginModal(false));
-            if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', () => toggleMobileMenu(true));
-            if (mobileMenuClose) mobileMenuClose.addEventListener('click', () => toggleMobileMenu(false));
-            
-            // Close modal if backdrop is clicked
-            const loginModal = document.getElementById('login-modal');
-            if (loginModal) {
-                loginModal.addEventListener('click', (e) => {
-                    if (e.target.id === 'login-modal') {
-                        toggleLoginModal(false);
-                    }
-                });
-            }
-
-            // Close time slot modal if backdrop is clicked
-            const timeSlotModal = document.getElementById('time-slot-modal');
-            if (timeSlotModal) {
-                timeSlotModal.addEventListener('click', (e) => {
-                    if (e.target.id === 'time-slot-modal') {
-                        toggleTimeSlotModal();
-                    }
-                });
-            }
-
-            lucide.createIcons();
-            showSlides();
-            
-            // Initialize logo animation
-            createLogoParticles();
-            setTimeout(triggerDissolve, 1000);
-            const goldenHandsLogo = document.getElementById('golden-hands-logo');
-            if (goldenHandsLogo) {
-                goldenHandsLogo.addEventListener('click', triggerDissolve);
-                goldenHandsLogo.addEventListener('touchstart', triggerDissolve);
-            }
-
-            // Initialize NEW particle animation
-            setTimeout(initParticleCanvas, 500);
-            
-            // Initialize hero slideshow
-            initHeroSlideshow();
-
-            // Initialize gallery slideshow
-            gallerySlides = document.querySelectorAll('.driving-slide');
-            galleryThumbnails = document.querySelectorAll('.thumbnail');
-            galleryProgressBar = document.querySelector('.progress-bar');
-            
-            if (gallerySlides.length > 0) {
-                showGallerySlide(0);
-                resetGalleryInterval();
-                updateGalleryProgressBar();
-            }
-            
-            const servicesScrolls = document.querySelectorAll('.services-scroll');
-            
-            servicesScrolls.forEach(scroll => {
-                const clone = scroll.cloneNode(true);
-                scroll.parentNode.appendChild(clone);
+            // Load all components
+            Promise.all([
+                loadComponent('nav-component', 'components/navbar.html'),
+                loadComponent('animation-section', 'components/animation-section.html'),
+                loadComponent('footer-component', 'components/footer.html')
+            ]).then((results) => {
+                console.log('All components loaded:', results);
                 
-                const contentWidth = scroll.scrollWidth;
-                const containerWidth = scroll.parentNode.clientWidth;
-                const duration = (contentWidth / containerWidth) * 20;
+                // Initialize forms
+                const contactForm = document.getElementById('contact-us-form');
+                const bookForm = document.getElementById('book-lesson-form');
+                const loginForm = document.getElementById('login-form');
                 
-                scroll.style.animationDuration = `${duration}s`;
-                clone.style.animationDuration = `${duration}s`;
+                if (contactForm) contactForm.addEventListener('submit', handleContactFormSubmit);
+                if (bookForm) bookForm.addEventListener('submit', handleBookLessonSubmit);
+                if (loginForm) loginForm.addEventListener('submit', handleLoginSubmit);
+
+                // UI Toggles
+                const searchToggle = document.getElementById('search-toggle');
+                const loginToggle = document.getElementById('login-toggle');
+                const registerToggle = document.getElementById('register-toggle');
+                const modalClose = document.getElementById('modal-close');
+                const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                const mobileMenuClose = document.getElementById('mobile-menu-close');
+                
+                if (searchToggle) searchToggle.addEventListener('click', toggleSearch);
+                if (loginToggle) loginToggle.addEventListener('click', () => toggleLoginModal(true));
+                if (registerToggle) registerToggle.addEventListener('click', () => toggleLoginModal(true));
+                if (modalClose) modalClose.addEventListener('click', () => toggleLoginModal(false));
+                if (mobileMenuToggle) mobileMenuToggle.addEventListener('click', () => toggleMobileMenu(true));
+                if (mobileMenuClose) mobileMenuClose.addEventListener('click', () => toggleMobileMenu(false));
+                
+                // Close modal if backdrop is clicked
+                const loginModal = document.getElementById('login-modal');
+                if (loginModal) {
+                    loginModal.addEventListener('click', (e) => {
+                        if (e.target.id === 'login-modal') {
+                            toggleLoginModal(false);
+                        }
+                    });
+                }
+
+                // Close time slot modal if backdrop is clicked
+                const timeSlotModal = document.getElementById('time-slot-modal');
+                if (timeSlotModal) {
+                    timeSlotModal.addEventListener('click', (e) => {
+                        if (e.target.id === 'time-slot-modal') {
+                            toggleTimeSlotModal();
+                        }
+                    });
+                }
+
+                lucide.createIcons();
+                showSlides();
+                
+                // Initialize logo animation
+                createLogoParticles();
+                setTimeout(triggerDissolve, 1000);
+                const goldenHandsLogo = document.getElementById('golden-hands-logo');
+                if (goldenHandsLogo) {
+                    goldenHandsLogo.addEventListener('click', triggerDissolve);
+                    goldenHandsLogo.addEventListener('touchstart', triggerDissolve);
+                }
+
+                // Initialize NEW particle animation
+                setTimeout(initParticleCanvas, 500);
+                
+                // Initialize hero slideshow
+                initHeroSlideshow();
+
+                // Initialize gallery slideshow
+                gallerySlides = document.querySelectorAll('.driving-slide');
+                galleryThumbnails = document.querySelectorAll('.thumbnail');
+                galleryProgressBar = document.querySelector('.progress-bar');
+                
+                if (gallerySlides.length > 0) {
+                    showGallerySlide(0);
+                    resetGalleryInterval();
+                    updateGalleryProgressBar();
+                }
+                
+                const servicesScrolls = document.querySelectorAll('.services-scroll');
+                
+                servicesScrolls.forEach(scroll => {
+                    const clone = scroll.cloneNode(true);
+                    scroll.parentNode.appendChild(clone);
+                    
+                    const contentWidth = scroll.scrollWidth;
+                    const containerWidth = scroll.parentNode.clientWidth;
+                    const duration = (contentWidth / containerWidth) * 20;
+                    
+                    scroll.style.animationDuration = `${duration}s`;
+                    clone.style.animationDuration = `${duration}s`;
+                });
             });
+
         };
 
         // Event listeners for particle animation
@@ -1477,126 +1506,8 @@
     <!-- Message Container (for form submissions, replacing alert) -->
     <div id="message-container" class="fixed top-4 right-4 z-50 w-full max-w-xs"></div>
 
-    <!-- Top Contact Bar & Search Panel -->
-    <div class="bg-broto-black text-white text-sm py-2 border-b border-broto-grey hidden md:block">
-        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
-            <div class="flex space-x-6">
-                <a href="tel:+9040040265" class="flex items-center hover:text-broto-yellow transition duration-300">
-                    <i data-lucide="phone" class="w-4 h-4 mr-2"></i> +91 9040040165
-                </a>
-                <a href="mailto:goldenhandsdrivingschool@gmail.com" class="flex items-center hover:text-broto-yellow transition duration-300">
-                    <i data-lucide="mail" class="w-4 h-4 mr-2"></i> goldenhandsdrivingschool@gmail.com
-                </a>
-            </div>
-            <div class="flex space-x-4 items-center">
-                <i data-lucide="search" id="search-toggle" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
-                <i data-lucide="user" class="w-5 h-5 cursor-pointer hover:text-broto-yellow transition duration-300"></i>
-                <button id="register-toggle" class="bg-broto-yellow text-broto-black text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-yellow-400 transition duration-300">
-                    Register
-                </button>
-                <button id="login-toggle" class="border border-broto-yellow text-broto-yellow text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-broto-yellow hover:text-broto-black transition duration-300">
-                    Login
-                </button>
-                <a href="#book-lesson" class="bg-broto-yellow text-broto-black text-xs font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
-                    Book Lesson
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search Panel (Hidden by default) -->
-    <div id="search-panel" class="hidden bg-broto-dark border-b border-broto-yellow py-3 z-30">
-        <div class="max-w-7xl mx-auto px-4 flex">
-            <input type="text" id="search-input" placeholder="Search courses, locations, or instructors..."
-                   class="w-full bg-broto-black text-white p-2 rounded-lg border border-broto-grey focus:ring-broto-yellow focus:border-broto-yellow">
-        </div>
-    </div>
-
-    <!-- Main Navigation Bar -->
-    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Mobile Menu Button (Left on mobile) -->
-                <button type="button" id="mobile-menu-toggle" class="inline-flex items-center justify-center p-2 rounded-md text-broto-yellow lg:hidden order-1" aria-expanded="false">
-                    <span class="sr-only">Open main menu</span>
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-
-              <!-- Logo and Brand Name -->
-                <div class="flex items-center order-2 lg:order-none">
-                <!-- Logo -->
-                    <img src="logo.png" alt="Golden Hands Logo" class="w-12 h-12 mr-3">
-                <!-- Brand Name -->
-                    <a href="index.html" class="text-2xl font-extrabold tracking-widest">
-                        <span class="text-white">GOLDEN</span>
-                        <span class="text-broto-yellow">HANDS</span>
-                     </a>
-                </div>
-                
-                <!-- Desktop Menu Items -->
-                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium order-3">
-                    <a href="#" class="hover:text-broto-yellow transition duration-300">Home</a>
-                    
-                    <!-- Services Dropdown -->
-                    <div class="relative group">
-                        <button onclick="toggleDropdown()" class="flex items-center hover:text-broto-yellow transition duration-300">
-                            Services <i data-lucide="chevron-down" class="w-4 h-4 ml-1 transition-transform duration-300"></i>
-                        </button>
-                        <div id="services-dropdown" class="dropdown-menu absolute left-0 mt-4 w-64 bg-broto-grey rounded-lg shadow-xl z-50">
-                            <div class="py-2">
-                                <a href="pages/driving-training.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Training</a>
-                                <a href="pages/driving-license.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Driving Licence</a>
-                                <a href="pages/car-buying-consultant.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Car Buying Consultant</a>
-                                <a href="pages/pdi.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">Pre-Delivery Inspection (PDI)</a>
-                                <a href="pages/rto-servic.html" class="block px-4 py-2 text-sm hover:bg-broto-dark hover:text-broto-yellow transition duration-200">RTO Service</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <a href="about.html" class="hover:text-broto-yellow transition duration-300">About</a>
-                    <a href="gallery.html" class="hover:text-broto-yellow transition duration-300">Gallery</a>
-                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Contact</a>
-                    <a href="contact.html" class="hover:text-broto-yellow transition duration-300">Location</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Mobile Menu Drawer (Right Side) -->
-    <div id="mobile-menu-drawer" class="fixed top-0 right-0 w-64 h-full bg-broto-dark p-6 z-50 shadow-2xl lg:hidden">
-        <div class="flex justify-end mb-8">
-            <button id="mobile-menu-close" class="text-broto-yellow hover:text-white">
-                <i data-lucide="x" class="w-8 h-8"></i>
-            </button>
-        </div>
-        <div class="space-y-4 text-lg font-medium">
-            <a href="#" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Home</a>
-            
-            <!-- Services Dropdown for Mobile -->
-            <div class="relative">
-                <button onclick="toggleMobileServices()" class="flex items-center justify-between w-full hover:text-broto-yellow transition duration-300">
-                    <span>Services</span>
-                    <i data-lucide="chevron-down" id="mobile-services-arrow" class="w-5 h-5 transition-transform duration-300"></i>
-                </button>
-                <div id="mobile-services-dropdown" class="dropdown-menu pl-4 mt-2 space-y-3">
-                    <a href="pages/driving-training.html" class="block text-broto-yellow hover:text-white transition duration-300" onclick="toggleMobileMenu(false)">Driving Training</a>
-                    <a href="pages/driving-license.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Driving Licence</a>
-                    <a href="pages/car-buying.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Car Buying Consultant</a>
-                    <a href="pages/pdi.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Pre-Delivery Inspection (PDI)</a>
-                    <a href="pages/rto-services.html" class="block text-gray-400 hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">RTO Service</a>
-                </div>
-            </div>
-            
-            <a href="about.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">About</a>
-            <a href="gallery.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Gallery</a>
-            <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Contact</a>
-            <a href="contact.html" class="block hover:text-broto-yellow transition duration-300" onclick="toggleMobileMenu(false)">Location</a>
-            <div class="pt-4 border-t border-broto-grey space-y-2">
-                <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleLoginModal(true); toggleMobileMenu(false);">Login / Register</button>
-                <button class="w-full text-left text-broto-yellow hover:text-white" onclick="toggleSearch(); toggleMobileMenu(false);">Search</button>
-            </div>
-        </div>
-    </div>
+    <!-- Navigation Component -->
+    <div id="nav-component"></div>
 
     <!-- FIXED Hero Section: Slideshow with Proper Sizing and Touch Controls -->
     <section class="h-[70vh] relative overflow-hidden bg-broto-black">
@@ -1641,30 +1552,8 @@
         </div>
     </section>
 
-    <!-- NEW CANVAS PARTICLE ANIMATION SECTION (Image-based) -->
-    <section class="particle-section py-16 bg-broto-black">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center">
-            <!-- Left side: Text content -->
-            <div class="lg:w-1/2 text-center lg:text-left mb-10 lg:mb-0">
-                <p class="text-white text-lg sm:text-xl mb-4 uppercase tracking-widest font-light">Start Your Journey</p>
-                <h1 class="text-6xl sm:text-7xl font-black leading-tight mb-6">
-                    <span class="text-broto-yellow">YOUR ROAD</span> <br>
-                    TO INDEPENDENCE
-                </h1>
-                <p class="text-xl sm:text-2xl text-white font-medium mb-10 tracking-wider">
-                    EXPERT DRIVING TRAINING <br class="hidden sm:block"> FOR EVERY SKILL LEVEL
-                </p>
-                <a href="#service-section" class="inline-block bg-broto-black text-broto-yellow border-2 border-broto-yellow text-lg font-bold px-10 py-4 rounded-xl shadow-2xl hover:bg-broto-yellow hover:text-broto-black transition duration-300 transform hover:scale-105">
-                    Explore Our Services
-                </a>
-            </div>
-            
-            <!-- Right side: Logo animation -->
-            <div class="lg:w-1/2 flex justify-center">
-                <canvas id="particleCanvas" class="particle-canvas"></canvas>
-            </div>
-        </div>
-    </section>
+    <!-- Animation Logo Component -->
+    <div id="animation-section"></div>
 
     <!-- NEW GALLERY SECTION (Replaces the old "YOUR ROAD TO INDEPENDENCE" section) -->
     <section class="py-8 bg-broto-dark">
@@ -2327,6 +2216,8 @@
                     </a>
                     <p class="text-center mt-4 text-sm">Subscribe to our channel for weekly videos!</p>
                 </div>
+            </div>
+        </div>
     </section>
 
     <!-- 4. Q&A Section (New) -->
@@ -2633,80 +2524,7 @@
         </div>
     </section>
 
-    <!-- 8. Footer -->
-    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
-                <!-- Column 1: Logo & Social -->
-                <div>
-                    <a href="index.html" class="text-2xl font-extrabold tracking-widest mb-4 block">
-                        <span class="text-white">GOLDEN</span>
-                        <span class="text-broto-yellow">HANDS</span>
-                    </a>
-
-                    <p class="text-gray-400 text-sm mb-4">
-                        Golden Hands Driving School. Your path to becoming a safe, skilled, and confident driver.
-                    </p>
-                    <div class="flex space-x-3 text-broto-yellow">
-                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="https://www.instagram.com/goldenhands_driving_school?igsh=MW5wcTd5N3M5bGthcA==" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="https://youtube.com/@goldenhandsdrivingschool?si=yAxNO9vSzqVesBBI" aria-label="YouTube"><i data-lucide="youtube" class="w-5 h-5 hover:text-white transition"></i></a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Quick Links (Updated) -->
-                <div>
-                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">Home</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-broto-yellow transition">Gallery</a></li>
-                        <li><a href="#faq-section" class="text-gray-400 hover:text-broto-yellow transition">FAQs</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Services (Updated) -->
-                <div>
-                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Training</a></li>
-                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Licence</a></li>
-                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Car Buying Consultant</a></li>
-                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">Pre-Delivery Inspection (PDI)</a></li>
-                        <li><a href="#service-section" class="text-gray-400 hover:text-broto-yellow transition">RTO Service</a></li>
-                        <li><a href="#fees-section" class="text-gray-400 hover:text-broto-yellow transition">Packages & Fees</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4 & 5: Contact & Branding -->
-                <div class="col-span-2">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
-                            <p class="text-gray-400 text-sm mb-2">Office: C-3/12, Satya Vihar, BBSR -PIN</p>
-                            <a href="tel:+918144600000" class="text-broto-yellow hover:text-white font-medium block">+91 8144600000</a>
-                            <a href="mailto:info@Sysmotor.in" class="text-broto-yellow hover:text-white font-medium block">goldenhandsdrivingschool@gmail.com</a>
-                        </div>
-                        <div class="flex flex-col items-center sm:items-end">
-                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
-                            <img src="https://placehold.co/150x80/FFC107/000000?text=LEARN+&+DRIVE" alt="Learn & Drive Logo" class="w-36 h-auto">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Footer (Copyright Section) -->
-            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
-                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2025 SYS Drawnest. All rights reserved.</p>
-                <div class="flex space-x-4 order-1 md:order-2">
-                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
-                    <a href="#" class="hover:text-broto-yellow transition">Sitemap</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer Component -->
+    <div id="footer-component"></div>
 </body>
-
 </html>
