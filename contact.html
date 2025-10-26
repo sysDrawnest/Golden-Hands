@@ -4,15 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us - Golden Hands Driving School</title>
-    <!-- Load Inter font from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Load Component Loader -->
+    <script src="components/components-loader.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#000000',
+                        'secondary': '#111111',
+                        'accent': '#FFC107',
+                        'cta-red': '#D92323',
+                        'dark-gray': '#1a1a1a',
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
     <style>
-        /* Tailwind configuration in JS handles colors */
-        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+        }
+
         /* Custom scrollbar for better aesthetics on dark theme */
         body::-webkit-scrollbar { width: 8px; }
         body::-webkit-scrollbar-track { background: #111; }
@@ -101,239 +136,51 @@
         .validation-message {
             transition: all 0.3s ease;
         }
+
+        /* Dropdown menu styles */
+        .dropdown-menu { 
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; 
+            max-height: 0; 
+            overflow: hidden; 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+        .dropdown-menu.active { 
+            max-height: 400px; 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        #mobile-menu-drawer { 
+            transition: transform 0.3s ease-in-out; 
+            transform: translateX(100%); 
+        }
+        #mobile-menu-drawer.active { 
+            transform: translateX(0); 
+        }
+        #mobile-services-dropdown {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobile-services-dropdown.active {
+            max-height: 400px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
     </style>
-    <script>
-        // Tailwind configuration for custom colors and font
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'broto-dark': '#111111',
-                        'broto-black': '#000000',
-                        'broto-yellow': '#FFC107',
-                        'broto-grey': '#333333',
-                        'broto-red': '#D92323', 
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-
-        // Form handling with validation
-        function handleContactSubmit(event) {
-            event.preventDefault();
-            
-            let isValid = true;
-            const firstInvalidField = [];
-            
-            // Validate all fields
-            const inputs = document.querySelectorAll('.validation-input');
-            inputs.forEach(input => {
-                const fieldName = input.name;
-                const messageElement = input.parentElement.querySelector('.validation-message');
-                
-                if (!validateField(input, fieldName, messageElement)) {
-                    isValid = false;
-                    if (firstInvalidField.length === 0) {
-                        firstInvalidField.push(input);
-                    }
-                }
-            });
-            
-            if (isValid) {
-                // Show success message
-                showMessage('Thank you for your message! We will get back to you within 24 hours.', 'success');
-                
-                // Reset form
-                event.target.reset();
-                
-                // Reset all validation states
-                inputs.forEach(input => {
-                    input.classList.remove('success', 'error');
-                    const messageElement = input.parentElement.querySelector('.validation-message');
-                    messageElement.classList.add('hidden');
-                });
-            } else {
-                // Focus on first invalid field
-                if (firstInvalidField.length > 0) {
-                    firstInvalidField[0].focus();
-                }
-                showMessage('Please fix the errors in the form before submitting.', 'error');
-            }
-        }
-
-        // Validation functions
-        const validators = {
-            name: (value) => {
-                return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
-            },
-            phone: (value) => {
-                if (value === '') return true; // Phone is optional
-                return /^[6-9]\d{9}$/.test(value);
-            },
-            email: (value) => {
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-            },
-            subject: (value) => {
-                return value !== ''; // Subject is optional but should be validated if selected
-            },
-            message: (value) => {
-                return value.trim().length >= 10;
-            }
-        };
-        
-        // Error messages
-        const errorMessages = {
-            name: 'Please enter a valid name (minimum 2 characters, letters only)',
-            phone: 'Please enter a valid 10-digit phone number starting with 6-9',
-            email: 'Please enter a valid email address',
-            subject: 'Please select a subject',
-            message: 'Please enter a message with at least 10 characters'
-        };
-
-        function validateField(input, fieldName, messageElement) {
-            const value = input.value.trim();
-            
-            // For optional fields, if empty, consider valid
-            if ((fieldName === 'phone' || fieldName === 'subject') && value === '') {
-                input.classList.remove('error', 'success');
-                messageElement.classList.add('hidden');
-                return true;
-            }
-            
-            const isValid = validators[fieldName](value);
-            
-            if (isValid) {
-                input.classList.remove('error');
-                input.classList.add('success');
-                messageElement.classList.add('hidden');
-                return true;
-            } else {
-                input.classList.remove('success');
-                input.classList.add('error');
-                messageElement.querySelector('span').textContent = errorMessages[fieldName];
-                messageElement.classList.remove('hidden');
-                return false;
-            }
-        }
-
-        function showMessage(message, type = 'success') {
-            // Remove existing messages
-            const existingMessage = document.querySelector('.form-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            // Create message element
-            const messageElement = document.createElement('div');
-            messageElement.className = `form-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
-                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-            }`;
-            messageElement.style.transform = 'translateX(100%)';
-            messageElement.innerHTML = `
-                <div class="flex items-center">
-                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            // Add to page
-            document.body.appendChild(messageElement);
-            
-            // Initialize icons
-            lucide.createIcons();
-            
-            // Animate in
-            setTimeout(() => {
-                messageElement.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 5 seconds
-            setTimeout(() => {
-                messageElement.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    messageElement.remove();
-                }, 500);
-            }, 5000);
-        }
-
-        // Initialize when page loads
-        window.onload = function() {
-            // Initialize form submission
-            const contactForm = document.getElementById('contact-form');
-            contactForm.addEventListener('submit', handleContactSubmit);
-            
-            // Initialize Lucide icons
-            lucide.createIcons();
-            
-            // Add floating animation to decorative elements
-            const floatingElements = document.querySelectorAll('.floating');
-            floatingElements.forEach((el, index) => {
-                el.style.animationDelay = `${index * 0.5}s`;
-            });
-
-            // Real-time validation for each input
-            const inputs = contactForm.querySelectorAll('.validation-input');
-            inputs.forEach(input => {
-                const fieldName = input.name;
-                const messageElement = input.parentElement.querySelector('.validation-message');
-                
-                input.addEventListener('input', function() {
-                    validateField(input, fieldName, messageElement);
-                });
-                
-                input.addEventListener('blur', function() {
-                    validateField(input, fieldName, messageElement);
-                });
-            });
-            
-            // Phone number specific validation - only allow numbers
-            const phoneInput = document.getElementById('phone');
-            phoneInput.addEventListener('input', function(e) {
-                // Remove any non-digit characters
-                e.target.value = e.target.value.replace(/\D/g, '');
-                
-                // Limit to 10 digits
-                if (e.target.value.length > 10) {
-                    e.target.value = e.target.value.slice(0, 10);
-                }
-                
-                const messageElement = phoneInput.parentElement.querySelector('.validation-message');
-                validateField(phoneInput, 'phone', messageElement);
-            });
-        };
-    </script>
 </head>
-<body class="bg-broto-black text-white font-sans antialiased">
+<body class="bg-primary text-white font-inter">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-broto-black border-b border-broto-grey sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-               <!-- Logo - Centered on mobile, left on desktop -->
-            <a href="index.html" class="text-3xl font-extrabold tracking-widest text-center w-full lg:w-auto lg:text-left">
-                <span class="text-white">GOLDEN</span>
-                <span class="text-broto-yellow">HANDS</span>
-            </a>
-                
-                <!-- Desktop Menu Items -->
-                <div class="hidden lg:flex space-x-6 xl:space-x-8 text-sm font-medium">
-                    <a href="index.html" class="hover:text-broto-yellow transition duration-300">Home</a>
-                    <a href="index.html#service-section" class="hover:text-broto-yellow transition duration-300">Services</a>
-                    <a href="about.html" class="hover:text-broto-yellow transition duration-300">About</a>
-                    <a href="index.html#gallery-section" class="hover:text-broto-yellow transition duration-300">Gallery</a>
-                    <a href="contact.html" class="text-broto-yellow font-semibold">Contact</a>
-                </div>
-                
-                <!-- CTA Button -->
-                <a href="index.html#book-lesson" class="hidden md:block bg-broto-yellow text-broto-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-yellow-400 transition duration-300">
-                    Book Lesson
-                </a>
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation Container -->
+    <div id="navbar-container"></div>
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
 
     <!-- Hero Section -->
     <section class="contact-hero-bg py-20 lg:py-28 relative overflow-hidden">
@@ -604,84 +451,264 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-broto-black pt-16 border-t-8 border-broto-yellow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-10 pb-10 border-b border-broto-grey">
-                <!-- Column 1: Logo & Social -->
-                <div>
-                    <a href="index.html" class="text-2xl font-extrabold tracking-widest mb-4 block">
-                        <span class="text-white">GOLDEN</span>
-                        <span class="text-broto-yellow">HANDS</span>
-                    </a>
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
 
-                    <p class="text-gray-400 text-sm mb-4">
-                        Your path to becoming a safe, skilled, and confident driver.
-                    </p>
-                    <div class="flex space-x-3 text-broto-yellow">
-                        <a href="#" aria-label="Facebook"><i data-lucide="facebook" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="#" aria-label="Instagram"><i data-lucide="instagram" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="#" aria-label="Twitter"><i data-lucide="twitter" class="w-5 h-5 hover:text-white transition"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin" class="w-5 h-5 hover:text-white transition"></i></a>
-                    </div>
-                </div>
-
-                <!-- Column 2: Quick Links -->
-                <div>
-                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Quick Links</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html" class="text-gray-400 hover:text-broto-yellow transition">Home</a></li>
-                        <li><a href="about.html" class="text-gray-400 hover:text-broto-yellow transition">About Us</a></li>
-                        <li><a href="index.html#gallery-section" class="text-gray-400 hover:text-broto-yellow transition">Gallery</a></li>
-                        <li><a href="contact.html" class="text-gray-400 hover:text-broto-yellow transition">Contact</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 3: Services -->
-                <div>
-                    <h4 class="text-lg font-bold text-white mb-4 uppercase">Core Services</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Training</a></li>
-                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Driving Licence</a></li>
-                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">Car Buying Consultant</a></li>
-                        <li><a href="index.html#service-section" class="text-gray-400 hover:text-broto-yellow transition">RTO Service</a></li>
-                    </ul>
-                </div>
-
-                <!-- Column 4 & 5: Contact & Branding -->
-                <div class="col-span-2">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-lg font-bold text-white mb-4 uppercase">Contact Us</h4>
-                            <p class="text-gray-400 text-sm mb-2">Satyavihar, Bhubaneswar</p>
-                            <a href="tel:+919040040165" class="text-broto-yellow hover:text-white font-medium block">+91 9040040165</a>
-                            <a href="mailto:goldenhandsdrivingschool@gmail.com" class="text-broto-yellow hover:text-white font-medium block">goldenhandsdrivingschool@gmail.com</a>
-                        </div>
-                        <div class="flex flex-col items-center sm:items-end">
-                            <h4 class="text-lg font-bold text-white mb-2 uppercase">Quality Focus</h4>
-                            <div class="bg-broto-yellow/20 p-3 rounded-lg">
-                                <span class="text-broto-yellow font-bold">LEARN & DRIVE</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Footer (Copyright Section) -->
-            <div class="flex flex-col md:flex-row justify-between items-center py-4 text-xs text-gray-500">
-                <p class="order-2 md:order-1 mt-2 md:mt-0">&copy; 2024 Golden Hands Driving School. All rights reserved.</p>
-                <div class="flex space-x-4 order-1 md:order-2">
-                    <a href="#" class="hover:text-broto-yellow transition">Privacy Policy</a>
-                    <a href="#" class="hover:text-broto-yellow transition">Terms and Conditions</a>
-                    <a href="#" class="hover:text-broto-yellow transition">Sitemap</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Initialize Lucide Icons -->
+    <!-- Page-specific JavaScript -->
     <script>
-        lucide.createIcons();
+        // Global navigation functions (these will be used by the loaded navbar)
+        function toggleDropdown() {
+            const dropdown = document.getElementById('services-dropdown');
+            dropdown?.classList.toggle('active');
+        }
+
+        function toggleSearch() {
+            const searchPanel = document.getElementById('search-panel');
+            if (searchPanel) {
+                searchPanel.classList.toggle('hidden');
+                if (!searchPanel.classList.contains('hidden')) {
+                    document.getElementById('search-input')?.focus();
+                }
+            }
+        }
+
+        function toggleLoginModal(open) {
+            const modal = document.getElementById('login-modal');
+            if (modal) {
+                const isOpen = (open !== undefined) ? open : !modal.classList.contains('hidden');
+                modal.classList.toggle('hidden', !isOpen);
+                document.body.classList.toggle('overflow-hidden', isOpen);
+            }
+        }
+
+        function toggleMobileMenu(open) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            if (drawer) {
+                const isOpen = (open !== undefined) ? open : !drawer.classList.contains('active');
+                drawer.classList.toggle('active', isOpen);
+                document.body.classList.toggle('overflow-hidden', isOpen);
+            }
+        }
+
+        function toggleMobileServices() {
+            const dropdown = document.getElementById('mobile-services-dropdown');
+            const arrow = document.getElementById('mobile-services-arrow');
+            
+            if (dropdown && arrow) {
+                dropdown.classList.toggle('active');
+                arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        // Form handling with validation
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            let isValid = true;
+            const firstInvalidField = [];
+            
+            // Validate all fields
+            const inputs = document.querySelectorAll('.validation-input');
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                if (!validateField(input, fieldName, messageElement)) {
+                    isValid = false;
+                    if (firstInvalidField.length === 0) {
+                        firstInvalidField.push(input);
+                    }
+                }
+            });
+            
+            if (isValid) {
+                // Show success message
+                showMessage('Thank you for your message! We will get back to you within 24 hours.', 'success');
+                
+                // Reset form
+                event.target.reset();
+                
+                // Reset all validation states
+                inputs.forEach(input => {
+                    input.classList.remove('success', 'error');
+                    const messageElement = input.parentElement.querySelector('.validation-message');
+                    messageElement.classList.add('hidden');
+                });
+            } else {
+                // Focus on first invalid field
+                if (firstInvalidField.length > 0) {
+                    firstInvalidField[0].focus();
+                }
+                showMessage('Please fix the errors in the form before submitting.', 'error');
+            }
+        }
+
+        // Validation functions
+        const validators = {
+            name: (value) => {
+                return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+            },
+            phone: (value) => {
+                if (value === '') return true; // Phone is optional
+                return /^[6-9]\d{9}$/.test(value);
+            },
+            email: (value) => {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            },
+            subject: (value) => {
+                return value !== ''; // Subject is optional but should be validated if selected
+            },
+            message: (value) => {
+                return value.trim().length >= 10;
+            }
+        };
+        
+        // Error messages
+        const errorMessages = {
+            name: 'Please enter a valid name (minimum 2 characters, letters only)',
+            phone: 'Please enter a valid 10-digit phone number starting with 6-9',
+            email: 'Please enter a valid email address',
+            subject: 'Please select a subject',
+            message: 'Please enter a message with at least 10 characters'
+        };
+
+        function validateField(input, fieldName, messageElement) {
+            const value = input.value.trim();
+            
+            // For optional fields, if empty, consider valid
+            if ((fieldName === 'phone' || fieldName === 'subject') && value === '') {
+                input.classList.remove('error', 'success');
+                messageElement.classList.add('hidden');
+                return true;
+            }
+            
+            const isValid = validators[fieldName](value);
+            
+            if (isValid) {
+                input.classList.remove('error');
+                input.classList.add('success');
+                messageElement.classList.add('hidden');
+                return true;
+            } else {
+                input.classList.remove('success');
+                input.classList.add('error');
+                messageElement.querySelector('span').textContent = errorMessages[fieldName];
+                messageElement.classList.remove('hidden');
+                return false;
+            }
+        }
+
+        function showMessage(message, type = 'success') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `form-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Contact page specific functionality
+        function initPageSpecific() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Initialize form submission
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', handleContactSubmit);
+            
+            // Add floating animation to decorative elements
+            const floatingElements = document.querySelectorAll('.floating');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.5}s`;
+            });
+
+            // Real-time validation for each input
+            const inputs = contactForm.querySelectorAll('.validation-input');
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                input.addEventListener('input', function() {
+                    validateField(input, fieldName, messageElement);
+                });
+                
+                input.addEventListener('blur', function() {
+                    validateField(input, fieldName, messageElement);
+                });
+            });
+            
+            // Phone number specific validation - only allow numbers
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                e.target.value = e.target.value.replace(/\D/g, '');
+                
+                // Limit to 10 digits
+                if (e.target.value.length > 10) {
+                    e.target.value = e.target.value.slice(0, 10);
+                }
+                
+                const messageElement = phoneInput.parentElement.querySelector('.validation-message');
+                validateField(phoneInput, 'phone', messageElement);
+            });
+
+            // Smooth scroll for "Send Message" button
+            document.querySelector('a[href="#contact-form"]')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('contact-form').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // Make functions globally available
+        window.toggleDropdown = toggleDropdown;
+        window.toggleSearch = toggleSearch;
+        window.toggleLoginModal = toggleLoginModal;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleMobileServices = toggleMobileServices;
+        window.initPageSpecific = initPageSpecific;
+
+        // Initialize page when components are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for components to load, then initialize
+            setTimeout(() => {
+                initPageSpecific();
+            }, 100);
+        });
     </script>
 </body>
 </html>
