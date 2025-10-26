@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSMOTOR - Driving Licence Services</title>
+    <!-- Load Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Load Component Loader -->
+    <script src="../components/components-loader.js"></script>
+    <style>
+        /* Tailwind configuration for custom colors and font */
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: #111; }
+        body::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 4px; }
+        .hero-overlay { background-color: rgba(0, 0, 0, 0.7); }
+        input:focus, textarea:focus, select:focus { border-color: #ffc107 !important; box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.5) !important; }
+        .service-card { background-color: #1a1a1a; padding: 2rem; border-radius: 0.75rem; transition: transform 0.3s, box-shadow 0.3s; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255, 193, 7, 0.2); }
+        
+        /* Form validation styles */
+        .validation-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        
+        .validation-input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .validation-message {
+            transition: all 0.3s ease;
+        }
+        
+        /* FIXED: Navigation dropdown styles - start closed */
+        .dropdown-menu { 
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out; 
+            max-height: 0; 
+            overflow: hidden; 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+        .dropdown-menu.active { 
+            max-height: 400px; 
+            opacity: 1; 
+            pointer-events: auto; 
+        }
+        
+        /* FIXED: Mobile menu styles - start closed */
+        #mobile-menu-drawer { 
+            transition: transform 0.3s ease-in-out; 
+            transform: translateX(100%); 
+        }
+        #mobile-menu-drawer.active { 
+            transform: translateX(0); 
+        }
+        
+        /* FIXED: Mobile services dropdown - start closed */
+        #mobile-services-dropdown {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #mobile-services-dropdown.active {
+            max-height: 400px;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broto-dark': '#111111',
+                        'broto-black': '#000000',
+                        'broto-yellow': '#FFC107',
+                        'broto-grey': '#333333',
+                        'broto-red': '#D92323'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+
+        // UI State Management
+        let isSearchOpen = false;
+        let isLoginModalOpen = false;
+        let isMobileMenuOpen = false;
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('services-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+                console.log('Dropdown toggled, active:', dropdown.classList.contains('active'));
+            }
+        }
+
+        function toggleSearch() {
+            isSearchOpen = !isSearchOpen;
+            const searchPanel = document.getElementById('search-panel');
+            if (searchPanel) {
+                searchPanel.classList.toggle('hidden', !isSearchOpen);
+                if (isSearchOpen) {
+                    document.getElementById('search-input')?.focus();
+                }
+            }
+        }
+
+        function toggleLoginModal(open) {
+            const modal = document.getElementById('login-modal');
+            isLoginModalOpen = (open !== undefined) ? open : !isLoginModalOpen;
+            if (modal) {
+                modal.classList.toggle('hidden', !isLoginModalOpen);
+                document.body.classList.toggle('overflow-hidden', isLoginModalOpen);
+            }
+        }
+
+        function toggleMobileMenu(open) {
+            const drawer = document.getElementById('mobile-menu-drawer');
+            isMobileMenuOpen = (open !== undefined) ? open : !isMobileMenuOpen;
+            if (drawer) {
+                drawer.classList.toggle('active', isMobileMenuOpen);
+                document.body.classList.toggle('overflow-hidden', isMobileMenuOpen);
+                console.log('Mobile menu toggled, active:', drawer.classList.contains('active'));
+            }
+        }
+
+        function toggleMobileServices() {
+            const dropdown = document.getElementById('mobile-services-dropdown');
+            const arrow = document.getElementById('mobile-services-arrow');
+            
+            if (dropdown && arrow) {
+                dropdown.classList.toggle('active');
+                arrow.classList.toggle('rotate-180');
+                console.log('Mobile services toggled, active:', dropdown.classList.contains('active'));
+            }
+        }
+
+        function showMessage(message, type = 'success') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.form-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create message element
+            const messageElement = document.createElement('div');
+            messageElement.className = `form-message fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl max-w-sm transform transition-all duration-500 ${
+                type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`;
+            messageElement.style.transform = 'translateX(100%)';
+            messageElement.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(messageElement);
+            
+            // Initialize icons
+            lucide.createIcons();
+            
+            // Animate in
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                messageElement.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 500);
+            }, 5000);
+        }
+
+        // Form validation functions
+        const validators = {
+            name: (value) => {
+                return value.trim().length >= 2 && /^[a-zA-Z\s]+$/.test(value.trim());
+            },
+            phone: (value) => {
+                return /^[6-9]\d{9}$/.test(value);
+            },
+            address: (value) => {
+                return value.trim().length >= 10;
+            },
+            service: (value) => {
+                return value !== '';
+            }
+        };
+        
+        const errorMessages = {
+            name: 'Please enter a valid name (minimum 2 characters, letters only)',
+            phone: 'Please enter a valid 10-digit phone number starting with 6-9',
+            address: 'Please enter your complete address (minimum 10 characters)',
+            service: 'Please select a service'
+        };
+
+        function validateField(input, fieldName, messageElement) {
+            const value = input.value.trim();
+            const isValid = validators[fieldName](value);
+            
+            if (value === '') {
+                input.classList.remove('success', 'error');
+                messageElement.classList.add('hidden');
+                return false;
+            }
+            
+            if (isValid) {
+                input.classList.remove('error');
+                input.classList.add('success');
+                messageElement.classList.add('hidden');
+                return true;
+            } else {
+                input.classList.remove('success');
+                input.classList.add('error');
+                messageElement.querySelector('span').textContent = errorMessages[fieldName];
+                messageElement.classList.remove('hidden');
+                return false;
+            }
+        }
+
+        // Booking Form Handler
+        function handleServiceBookingSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const inputs = form.querySelectorAll('.validation-input');
+            let isValid = true;
+            const firstInvalidField = [];
+            
+            inputs.forEach(input => {
+                const fieldName = input.name || input.id.replace('book-', '').replace('-select', '');
+                const messageElement = input.parentElement.querySelector('.validation-message');
+                
+                if (!validateField(input, fieldName, messageElement)) {
+                    isValid = false;
+                    if (firstInvalidField.length === 0) {
+                        firstInvalidField.push(input);
+                    }
+                }
+            });
+            
+            if (isValid) {
+                const service = document.getElementById('book-service-select').value;
+                
+                // Add submission animation
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin mx-auto"></i> Processing...';
+                submitBtn.disabled = true;
+                lucide.createIcons();
+                
+                // Simulate form submission
+                setTimeout(() => {
+                    showMessage(`RTO Service request for "${service}" sent successfully! An RTO expert will contact you shortly.`, 'success');
+                    
+                    // Reset form and button
+                    form.reset();
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Reset all validation states
+                    inputs.forEach(input => {
+                        input.classList.remove('success', 'error');
+                        const messageElement = input.parentElement.querySelector('.validation-message');
+                        messageElement.classList.add('hidden');
+                    });
+                }, 2000);
+            } else {
+                // Focus on first invalid field
+                if (firstInvalidField.length > 0) {
+                    firstInvalidField[0].focus();
+                }
+                showMessage('Please fix the errors in the form before submitting.', 'error');
+            }
+        }
+
+        // Driving Licence page specific functionality
+        function initPageSpecific() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Initialize form submission and validation
+            const bookForm = document.getElementById('book-service-form');
+            if (bookForm) {
+                bookForm.addEventListener('submit', handleServiceBookingSubmit);
+                
+                // Add real-time validation
+                const inputs = bookForm.querySelectorAll('.validation-input');
+                inputs.forEach(input => {
+                    const fieldName = input.name || input.id.replace('book-', '').replace('-select', '');
+                    const messageElement = input.parentElement.querySelector('.validation-message');
+                    
+                    input.addEventListener('input', function() {
+                        validateField(input, fieldName, messageElement);
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        validateField(input, fieldName, messageElement);
+                    });
+                });
+                
+                // Phone number specific validation - only allow numbers
+                const phoneInput = document.getElementById('book-phone');
+                if (phoneInput) {
+                    phoneInput.addEventListener('input', function(e) {
+                        // Remove any non-digit characters
+                        e.target.value = e.target.value.replace(/\D/g, '');
+                        
+                        // Limit to 10 digits
+                        if (e.target.value.length > 10) {
+                            e.target.value = e.target.value.slice(0, 10);
+                        }
+                        
+                        const messageElement = phoneInput.parentElement.querySelector('.validation-message');
+                        validateField(phoneInput, 'phone', messageElement);
+                    });
+                }
+            }
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // FIXED: Ensure navigation elements start closed
+            setTimeout(() => {
+                const dropdown = document.getElementById('services-dropdown');
+                const mobileDrawer = document.getElementById('mobile-menu-drawer');
+                const mobileServices = document.getElementById('mobile-services-dropdown');
+                
+                if (dropdown) dropdown.classList.remove('active');
+                if (mobileDrawer) mobileDrawer.classList.remove('active');
+                if (mobileServices) mobileServices.classList.remove('active');
+                
+                console.log('Navigation elements initialized to closed state');
+            }, 50);
+        }
+
+        // Make functions globally available
+        window.toggleDropdown = toggleDropdown;
+        window.toggleSearch = toggleSearch;
+        window.toggleLoginModal = toggleLoginModal;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleMobileServices = toggleMobileServices;
+        window.initPageSpecific = initPageSpecific;
+
+        // Initialize page when components are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for components to load, then initialize
+            setTimeout(() => {
+                initPageSpecific();
+            }, 100);
+        });
+    </script>
+</head>
+
+<body class="bg-broto-black text-white font-sans antialiased">
+
+    <!-- Navigation Container -->
+    <div id="navbar-container"></div>
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
+
+    <!-- Hero Banner for Service Page -->
+    <section class="relative h-64 flex items-center bg-cover bg-center"
+        style="background-image: url('https://images.pexels.com/photos/163771/pexels-photo-163771.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');">
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
+            <h1 class="text-5xl font-black text-white uppercase tracking-widest">
+                Driving <span class="text-broto-yellow">Licence</span> & RTO Services
+            </h1>
+            <p class="text-gray-300 text-lg mt-2">Hassle-Free Documentation for Every Stage of Your Driving Journey.</p>
+        </div>
+    </section>
+
+    <!-- 1. All Licence Service Section -->
+    <section class="py-16 bg-broto-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-white mb-10 text-center">
+                Our Full Suite of <span class="text-broto-yellow">Licensing and Document</span> Services
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Service Card 1: Learner's License (LL) -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="book-open-check" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">Learner's License (LL)</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Assistance with online LL application, scheduling the RTO test, and providing study materials for successful completion.
+                    </p>
+                </div>
+
+                <!-- Service Card 2: Driving License (DL) -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="badge-check" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">Permanent Driving License (DL)</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Full support for applying for your permanent license, including document verification, slot booking, and professional guidance for the driving test.
+                    </p>
+                </div>
+
+                <!-- Service Card 3: International Driving Permit (IDP) -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="plane" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">International Driving Permit</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Complete assistance in obtaining an IDP for global travel. We handle the documentation and liaise with the RTO to expedite your application.
+                    </p>
+                </div>
+
+                <!-- Service Card 4: DL Renewal -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="repeat-2" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">Driving Licence Renewal</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Don't let your license expire. We manage the entire renewal process, including document submission and medical certificate requirements, if applicable.
+                    </p>
+                </div>
+
+                <!-- Service Card 5: Address Update -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="map-pin" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">Address Update</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Smooth and correct change of residential address on your Driving Licence record without multiple trips to the RTO office.
+                    </p>
+                </div>
+
+                <!-- Service Card 6: Mobile No Update -->
+                <div class="service-card border-t-4 border-broto-yellow">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="phone-call" class="w-8 h-8 text-broto-yellow mr-3"></i>
+                        <h3 class="text-2xl font-bold text-white">Mobile No. Update</h3>
+                    </div>
+                    <p class="text-gray-400">
+                        Ensure your RTO records are up-to-date by quickly linking your latest mobile number to your DL/LL details for communication.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Fees Section - UPDATED: Removed Package 3 -->
+    <section id="fees-section" class="py-16 bg-broto-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8 tracking-wider text-center">
+                COMBINED TRAINING <span class="text-broto-yellow">PACKAGE PRICING</span>
+            </h2>
+            <p class="text-gray-500 text-center mb-6">Note: RTO service fees are separate from training costs listed below.</p>
+
+            <div class="overflow-x-auto rounded-xl shadow-2xl">
+                <table class="w-full min-w-max border-collapse">
+                    <thead class="bg-broto-yellow text-broto-black uppercase text-sm">
+                        <tr>
+                            <th class="p-4 text-left font-black">Packages</th>
+                            <th class="p-4 text-center font-black">Package 1</th>
+                            <th class="p-4 text-center font-black">Package 2</th>
+                            <th class="p-4 text-center font-black">Package 4</th>
+                            <th class="p-4 text-center font-black">Package 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Price Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Price (INR)</td>
+                            <td class="p-4 text-center">₹3000</td>
+                            <td class="p-4 text-center">₹3500</td>
+                            <td class="p-4 text-center">₹4500</td>
+                            <td class="p-4 text-center">₹5000</td>
+                        </tr>
+                        <!-- Practical Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Practical Lessons (Hrs)</td>
+                            <td class="p-4 text-center">10</td>
+                            <td class="p-4 text-center">15</td>
+                            <td class="p-4 text-center">20</td>
+                            <td class="p-4 text-center">24</td>
+                        </tr>
+                        <!-- Theory Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Theory Classes (Hrs)</td>
+                            <td class="p-4 text-center">3</td>
+                            <td class="p-4 text-center">5</td>
+                            <td class="p-4 text-center">7</td>
+                            <td class="p-4 text-center">10</td>
+                        </tr>
+                        <!-- Home Pickup & Drop Row -->
+                        <tr class="bg-broto-dark/70 text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold">Home Pickup & Drop</td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="check" class="w-5 h-5 text-green-500 mx-auto"></i></td>
+                        </tr>
+                        <!-- Vehicle Row -->
+                        <tr class="bg-broto-dark text-white border-b border-broto-grey">
+                            <td class="p-4 font-bold text-broto-yellow">Vehicle</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                            <td class="p-4 text-center">WagonR</td>
+                        </tr>
+                        <!-- Trail Driving Row -->
+                        <tr class="bg-broto-dark/70 text-white">
+                            <td class="p-4 font-bold">Trail Driving (Days)</td>
+                            <td class="p-4 text-center">1</td>
+                            <td class="p-4 text-center">2</td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                            <td class="p-4 text-center"><i data-lucide="x" class="w-5 h-5 text-broto-red mx-auto"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Book Service Form Section - UPDATED: Added validation -->
+    <section id="book-service-section" class="py-16 bg-broto-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-extrabold text-white mb-4 text-center">
+                BOOK YOUR <span class="text-broto-yellow">RTO SERVICE</span>
+            </h2>
+            <p class="text-gray-400 text-lg mb-10 text-center">Tell us which service you need assistance with, and we will handle the RTO process.</p>
+
+            <form id="book-service-form" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Full Name -->
+                    <div class="relative">
+                        <input type="text" id="book-name" name="name" placeholder="Full Name" required
+                            class="validation-input w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter your full name</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Number -->
+                    <div class="relative">
+                        <input type="tel" id="book-phone" name="phone" placeholder="Phone Number" required maxlength="10"
+                            class="validation-input w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                            <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                            <span>Please enter a valid 10-digit phone number</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Address -->
+                <div class="relative">
+                    <input type="text" id="book-address" name="address" placeholder="Current Address for Document Verification" required
+                        class="validation-input w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                    <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                        <span>Please enter your complete address</span>
+                    </div>
+                </div>
+
+                <!-- Select Service -->
+                <div class="relative">
+                    <select id="book-service-select" name="service" required
+                        class="validation-input w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200">
+                        <option value="" disabled selected>Select Licence/RTO Service</option>
+                        <option value="Learner's License (LL)">Learner's License (LL)</option>
+                        <option value="Driving License (DL)">Driving License (DL)</option>
+                        <option value="International Driving Permit">International Driving Permit</option>
+                        <option value="Driving Licence Renewal">Driving Licence Renewal</option>
+                        <option value="Address Update">Address Update</option>
+                        <option value="Mobile No Update">Mobile No Update</option>
+                    </select>
+                    <div class="validation-message hidden text-xs text-red-400 mt-1 flex items-center">
+                        <i data-lucide="alert-circle" class="w-3 h-3 mr-1"></i>
+                        <span>Please select a service</span>
+                    </div>
+                </div>
+
+                <!-- Write Something -->
+                <textarea placeholder="Write details about your current documents or any specific RTO issues." rows="4"
+                    class="w-full bg-broto-black text-white p-3 rounded-lg border border-broto-grey focus:ring-broto-yellow transition duration-200"></textarea>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full bg-broto-yellow text-broto-black font-bold text-lg px-10 py-3 rounded-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-[1.02] shadow-xl">
+                    Submit Booking Request
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        // Initialize page when components are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for components to load, then initialize
+            setTimeout(() => {
+                if (typeof initPageSpecific === 'function') {
+                    initPageSpecific();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
