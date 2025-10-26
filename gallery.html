@@ -1,4 +1,3 @@
-<!-- dynamic componets loader, reuse the code(testing   -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -369,15 +368,15 @@
     <!-- Footer Container -->
     <div id="footer-container"></div>
 
-<!-- Debug Information -->
-<div id="debug-info" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; z-index: 10000; font-size: 12px;">
-    Debug: Components loading...
-</div>
-
     <!-- Page-specific JavaScript -->
     <script>
         // Gallery-specific functionality
         function initPageSpecific() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
             // Gallery filtering
             const filterButtons = document.querySelectorAll('.filter-btn');
             const galleryItems = document.querySelectorAll('.gallery-item');
@@ -465,60 +464,13 @@
         window.toggleMobileServices = toggleMobileServices;
         window.initPageSpecific = initPageSpecific;
 
-        // Debug: Check what components loaded
-        setTimeout(() => {
-            console.log('=== COMPONENT LOADING DEBUG ===');
-            console.log('Navbar container content length:', document.getElementById('navbar-container')?.innerHTML?.length || 'Empty');
-            console.log('Footer container content length:', document.getElementById('footer-container')?.innerHTML?.length || 'Empty');
-            console.log('Modal container content length:', document.getElementById('modal-container')?.innerHTML?.length || 'Empty');
-            
-            // Check if components have actual content (not just empty divs)
-            const navbarContent = document.getElementById('navbar-container')?.innerHTML;
-            const footerContent = document.getElementById('footer-container')?.innerHTML;
-            const modalContent = document.getElementById('modal-container')?.innerHTML;
-            
-            const hasNavbar = navbarContent && navbarContent.length > 50; // More than just empty tags
-            const hasFooter = footerContent && footerContent.length > 50;
-            const hasModal = modalContent && modalContent.length > 50;
-            
-            console.log('Navbar has content:', hasNavbar);
-            console.log('Footer has content:', hasFooter);
-            console.log('Modal has content:', hasModal);
-            
-            // Update debug info
-            const debugInfo = document.getElementById('debug-info');
-            if (debugInfo) {
-                debugInfo.innerHTML = `
-                    Components Status:<br>
-                    Navbar: ${hasNavbar ? '✓ Loaded' : '✗ Empty/Missing'}<br>
-                    Footer: ${hasFooter ? '✓ Loaded' : '✗ Empty/Missing'}<br>
-                    Modal: ${hasModal ? '✓ Loaded' : '✗ Empty/Missing'}<br>
-                    <small>Check browser console (F12) for details</small>
-                `;
-                
-                // Color code the status
-                if (hasNavbar && hasFooter && hasModal) {
-                    debugInfo.style.background = 'rgba(0,255,0,0.8)';
-                } else if (!hasNavbar && !hasFooter && !hasModal) {
-                    debugInfo.style.background = 'rgba(255,0,0,0.8)';
-                } else {
-                    debugInfo.style.background = 'rgba(255,165,0,0.8)';
-                }
-            }
-            
-            // If components are missing, show more detailed error
-            if (!hasNavbar || !hasFooter || !hasModal) {
-                console.error('Some components failed to load:');
-                if (!hasNavbar) console.error('- Navbar is empty or missing');
-                if (!hasFooter) console.error('- Footer is empty or missing');
-                if (!hasModal) console.error('- Modal is empty or missing');
-                console.error('Check:');
-                console.error('1. File paths in components-loader.js');
-                console.error('2. Component files exist in components/ folder');
-                console.error('3. Component files have actual HTML content');
-                console.error('4. No JavaScript errors in console');
-            }
-        }, 1500);
+        // Initialize page when components are loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for components to load, then initialize
+            setTimeout(() => {
+                initPageSpecific();
+            }, 100);
+        });
     </script>
 </body>
 </html>
